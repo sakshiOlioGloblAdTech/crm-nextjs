@@ -1,0 +1,575 @@
+// ============================================================
+// CRM — Prisma Schema
+// Translated from all Laravel migrations
+// Database: PostgreSQL
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+// ─────────────────────────────────────────────
+// AUTH — Admin users
+// ─────────────────────────────────────────────
+
+model User {
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  emailVerifiedAt DateTime?
+  password        String
+  rememberToken   String?
+  role            UserRole  @default(STAFF)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+}
+
+// ─────────────────────────────────────────────
+// CUSTOMERS
+// ─────────────────────────────────────────────
+
+model Customer {
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String    @unique
+  mobileNumber  String?   @unique
+  photo         String?
+  dob           DateTime? @db.Date
+  gender        String?
+  password      String
+  uniqueId      String
+  token         String?
+  status        Boolean   @default(false)
+  rememberToken String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  addresses          CustomerAddress[]
+  orders             OrderMaster[]
+  wishlists          Wishlist[]
+  carts              Cart[]
+  customerPromocodes CustomerPromocode[]
+  returnOrders       ReturnOrder[]
+
+  @@map("customers")
+}
+
+model CustomerAddress {
+  id            Int      @id @default(autoincrement())
+  customerId    Int?
+  name          String
+  phoneNumber   String
+  email         String?
+  streetAddress String
+  landmarks     String?
+  city          String
+  state         String
+  country       String
+  pincode       String
+  isDefault     Boolean  @default(false)
+  addressType   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@map("customer_addresses")
+}
+
+// ─────────────────────────────────────────────
+// CATEGORIES & SUBCATEGORIES
+// ─────────────────────────────────────────────
+
+model Category {
+  id              Int      @id @default(autoincrement())
+  name            String
+  slug            String   @unique
+  description     String?
+  image           String?
+  altTag          String?
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  isFeatured      Boolean  @default(false)
+  status          Boolean  @default(false)
+  hsnCode         String?
+  gst             Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  subCategories SubCategory[]
+
+  @@map("categories")
+}
+
+model SubCategory {
+  id              Int      @id @default(autoincrement())
+  name            String
+  categoryId      Int
+  slug            String?  @unique
+  description     String?
+  image           String?
+  headerImage     String?
+  altTag          String?
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  isFeatured      Boolean  @default(false)
+  status          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  category              Category               @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products              Product[]
+  subcategoryPromocodes SubcategoryPromocode[]
+
+  @@map("sub_categories")
+}
+
+// ─────────────────────────────────────────────
+// PRODUCTS, VARIATIONS & ATTRIBUTES
+// ─────────────────────────────────────────────
+
+model Product {
+  id               Int      @id @default(autoincrement())
+  subcategoryId    Int
+  productName      String
+  urlSlug          String
+  productId        String
+  images           Json?
+  shortDescription String
+  description      String
+  altTag           String?
+  metaTitle        String?
+  metaDescription  String?
+  metaKeywords     String?
+  productSchema    String?
+  isFeatured       Boolean  @default(false)
+  status           Boolean  @default(false)
+  isNew            Boolean  @default(false)
+  isBestSeller     Boolean  @default(false)
+  broughtTogetherId Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  subcategory       SubCategory       @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  broughtTogether   ProductVariation? @relation("BroughtTogether", fields: [broughtTogetherId], references: [id], onDelete: SetNull)
+  variations        ProductVariation[] @relation("ProductVariations")
+  wishlists         Wishlist[]
+  carts             Cart[]
+  orderDetails      OrderDetail[]
+  productPromocodes ProductPromocode[]
+
+  @@map("products")
+}
+
+model ProductVariation {
+  id             Int      @id @default(autoincrement())
+  productId      Int
+  sku            String   @unique
+  price          Decimal  @db.Decimal(10, 2)
+  specialPrice   Decimal? @db.Decimal(10, 2)
+  stock          Int
+  variationImage String?
+  weightUnit     String
+  weight         Float
+  dimensionUnit  String
+  length         Float
+  width          Float
+  height         Float
+  orderSort      Int?     @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product                 Product                @relation("ProductVariations", fields: [productId], references: [id], onDelete: Cascade)
+  attributeValues         ProductAttributeValue[]
+  carts                   Cart[]
+  orderDetails            OrderDetail[]
+  broughtTogetherProducts Product[]              @relation("BroughtTogether")
+
+  @@map("product_variations")
+}
+
+model Attribute {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attributeValues ProductAttributeValue[]
+
+  @@map("attributes")
+}
+
+model ProductAttributeValue {
+  id                 Int      @id @default(autoincrement())
+  productVariationId Int
+  attributeId        Int
+  value              String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  productVariation ProductVariation @relation(fields: [productVariationId], references: [id], onDelete: Cascade)
+  attribute        Attribute        @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  @@map("product_attribute_values")
+}
+
+// ─────────────────────────────────────────────
+// PROMO CODES
+// ─────────────────────────────────────────────
+
+model Promocode {
+  id               Int      @id @default(autoincrement())
+  promocode        String
+  shortDescription String
+  description      String?
+  discountType     Int
+  discount         Float
+  maximumCap       Int
+  startDate        DateTime @db.Date
+  expiryDate       DateTime @db.Date
+  useTime          Int
+  isFirstOrder     Boolean? @default(false)
+  isProduct        Boolean? @default(false)
+  isSubcategory    Boolean? @default(false)
+  status           Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  productPromocodes     ProductPromocode[]
+  subcategoryPromocodes SubcategoryPromocode[]
+  customerPromocodes    CustomerPromocode[]
+
+  @@map("promocodes")
+}
+
+model ProductPromocode {
+  id          Int      @id @default(autoincrement())
+  promocodeId Int
+  productId   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  promocode Promocode @relation(fields: [promocodeId], references: [id], onDelete: Cascade)
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_promocodes")
+}
+
+model SubcategoryPromocode {
+  id            Int      @id @default(autoincrement())
+  promocodeId   Int
+  subCategoryId Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  promocode   Promocode   @relation(fields: [promocodeId], references: [id], onDelete: Cascade)
+  subCategory SubCategory @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
+
+  @@map("subcategory_promocodes")
+}
+
+model CustomerPromocode {
+  id          Int      @id @default(autoincrement())
+  customerId  Int?
+  promocodeId Int
+  status      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  customer  Customer?  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  promocode Promocode  @relation(fields: [promocodeId], references: [id], onDelete: Cascade)
+
+  @@map("customer_promocodes")
+}
+
+// ─────────────────────────────────────────────
+// ORDERS
+// ─────────────────────────────────────────────
+
+model OrderMaster {
+  id                        Int          @id @default(autoincrement())
+  custName                  String
+  custEmail                 String
+  custNumber                String
+  customerId                Int?
+  streetAddress             String
+  landmarks                 String?
+  city                      String
+  state                     String
+  country                   String
+  pincode                   String
+  addressType               String?
+  orderNumber               String
+  orderDate                 DateTime
+  itemTotal                 Decimal      @db.Decimal(10, 2)
+  deliveryFee               Decimal?     @db.Decimal(10, 2)
+  gstCharges                Decimal      @db.Decimal(10, 2)
+  cgst                      Decimal?     @db.Decimal(10, 2)
+  sgst                      Decimal?     @db.Decimal(10, 2)
+  igst                      Decimal?     @db.Decimal(10, 2)
+  grandtotal                Decimal      @db.Decimal(10, 2)
+  razorpayTransactionAmount Decimal?     @db.Decimal(10, 2)
+  promocode                 String?
+  promocodeId               Int?
+  discount                  Int?
+  isPromocodeMaxCapApplied  Boolean?     @default(false)
+  discountType              Int?
+  orderStatus               OrderStatus
+  razorpayOrderId           String?
+  paymentGatewayResponse    String?
+  razorpayPaymentId         String?
+  razorpaySignature         String?
+  paymentStatus             String?
+  cancelledDate             DateTime?
+  cancellationFlag          String?
+  cancellationReason        String?
+  paymentMode               PaymentMode?
+  paymentMethod             String?
+  isEmailSent               DateTime?
+  createdAt                 DateTime     @default(now())
+  updatedAt                 DateTime     @updatedAt
+
+  customer     Customer?     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  orderDetails OrderDetail[]
+
+  @@map("order_masters")
+}
+
+enum OrderStatus {
+  PAYMENT_PENDING
+  PLACED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMode {
+  RAZORPAY
+  COD
+}
+
+model OrderDetail {
+  id                   Int         @id @default(autoincrement())
+  orderMasterId        Int
+  productId            Int
+  variationId          Int
+  productName          String
+  sku                  String
+  attributes           Json?
+  quantity             Int
+  subOrderNumber       String
+  weightUnit           String?
+  weight               Float?
+  dimensionUnit        String?
+  length               Float?
+  width                Float?
+  height               Float?
+  unitPrice            Decimal     @db.Decimal(10, 2)
+  priceWithGst         Decimal     @db.Decimal(10, 2)
+  total                Decimal     @db.Decimal(10, 2)
+  deliveryFee          Decimal?    @db.Decimal(10, 2)
+  gstCharges           Decimal?    @db.Decimal(10, 2)
+  cgst                 Decimal?    @db.Decimal(10, 2)
+  sgst                 Decimal?    @db.Decimal(10, 2)
+  igst                 Decimal?    @db.Decimal(10, 2)
+  orderStatus          OrderStatus
+  deliveredDate        DateTime?
+  shiprocketOrderId    String?
+  shiprocketShipmentId String?
+  awbNumber            String?
+  cancelOnShiprocket   Boolean?
+  estimatedDeliveryDate DateTime?
+  labelUrl             String?
+  courierName          String?
+  cancelledDate        DateTime?
+  cancellationFlag     String?
+  cancellationReason   String?
+  refundTransactionId  String?
+  refundDate           DateTime?
+  refundAmount         Int?
+  refundSlabCharges    Float?
+  refundRemarks        String?
+  refundComment        String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  orderMaster OrderMaster      @relation(fields: [orderMasterId], references: [id], onDelete: Cascade)
+  product     Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variation   ProductVariation @relation(fields: [variationId], references: [id], onDelete: Cascade)
+  returnOrder ReturnOrder?
+
+  @@map("order_details")
+}
+
+// ─────────────────────────────────────────────
+// RETURNS, CANCELLATIONS & WARRANTY
+// ─────────────────────────────────────────────
+
+model ReturnOrder {
+  id                 Int          @id @default(autoincrement())
+  orderDetailId      Int          @unique
+  orderNumber        String
+  customerId         Int
+  returnedQuantity   Int
+  refundAmount       Decimal?     @db.Decimal(10, 2)
+  status             ReturnStatus @default(PENDING)
+  returnReason       String?
+  returnRequestDate  DateTime
+  returnAcceptedDate DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  orderDetail OrderDetail @relation(fields: [orderDetailId], references: [id], onDelete: Cascade)
+  customer    Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@map("return_orders")
+}
+
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+model ReturnReason {
+  id        Int      @id @default(autoincrement())
+  reason    String
+  status    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("return_reasons")
+}
+
+model CancellationReason {
+  id        Int      @id @default(autoincrement())
+  reason    String
+  status    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cancellation_reasons")
+}
+
+model WarrantyClaim {
+  id               Int            @id @default(autoincrement())
+  purchased        String
+  fullName         String?
+  email            String?
+  mobileNumber     String?
+  cityStore        String?
+  productNumber    String?
+  productName      String?
+  cookwareType     String?
+  orderNumber      String?
+  subOrderNumber   String?
+  purchaseDate     DateTime?      @db.Date
+  billName         String?
+  comments         String?
+  date             DateTime?
+  warrantyApproved DateTime?
+  status           WarrantyStatus @default(PENDING)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("warranty_claims")
+}
+
+enum WarrantyStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─────────────────────────────────────────────
+// CART & WISHLIST
+// ─────────────────────────────────────────────
+
+model Cart {
+  id              Int      @id @default(autoincrement())
+  customerId      Int?
+  guestToken      String?
+  productId       Int
+  variationId     Int
+  attributeValues Json?
+  quantity        Int      @default(1)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  customer  Customer?        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product   Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variation ProductVariation @relation(fields: [variationId], references: [id], onDelete: Cascade)
+
+  @@map("carts")
+}
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  customerId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("wishlists")
+}
+
+// ─────────────────────────────────────────────
+// CONTENT & CONFIG
+// ─────────────────────────────────────────────
+
+model HomeBanner {
+  id          Int      @id @default(autoincrement())
+  bannerImg   String
+  title       String
+  description String
+  btnText     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("home_banners")
+}
+
+model Setting {
+  id                 Int      @id @default(autoincrement())
+  email              String?
+  email2             String?
+  email3             String?
+  deliveryFee        Float?
+  defaultDeliveryFee Float?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model State {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("states")
+}
