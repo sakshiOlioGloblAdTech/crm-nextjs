@@ -7,9 +7,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    middlewarePrefetch: "strict",
-  },
 };
 
 export default nextConfig;

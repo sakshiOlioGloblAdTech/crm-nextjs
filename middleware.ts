@@ -1,27 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+export const runtime = "nodejs";
+
 export async function middleware(req: NextRequest) {
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const isLoggedIn   = !!token;
-  const isLoginPage  = req.nextUrl.pathname === "/login";
-  const isApiAuth    = req.nextUrl.pathname.startsWith("/api/auth");
-  const isStatic     = req.nextUrl.pathname.startsWith("/_next");
+  const { pathname } = req.nextUrl;
 
-  if (isStatic || isApiAuth) return NextResponse.next();
-  if (!isLoggedIn && !isLoginPage) {
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/favicon.ico")
+  ) {
+    return NextResponse.next();
+  }
+
+  if (!token && pathname !== "/login") {
     return NextResponse.redirect(new URL("/login", req.url));
   }
-  if (isLoggedIn && isLoginPage) {
+
+  if (token && pathname === "/login") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|public).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
