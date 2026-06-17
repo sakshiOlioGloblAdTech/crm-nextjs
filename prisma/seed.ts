@@ -1,18 +1,9 @@
 import bcrypt from "bcryptjs";
 import * as dotenv from "dotenv";
-
 dotenv.config();
 
 const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient({
-  log: ["error"],
-  __internal: {
-    configOverride: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-} as any);
+const prisma = new PrismaClient();
 
 async function main() {
   const hashedPassword = await bcrypt.hash("admin123", 12);
