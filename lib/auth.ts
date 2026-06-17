@@ -10,6 +10,8 @@ const loginSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+  trustHost: true,
   providers: [
     Credentials({
       async authorize(credentials) {
@@ -29,10 +31,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!passwordMatch) return null;
 
         return {
-          id: String(user.id),
-          name: user.name,
+          id:    String(user.id),
+          name:  user.name,
           email: user.email,
-          role: user.role,
+          role:  user.role,
         };
       },
     }),
@@ -40,19 +42,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id   = user.id;
         token.role = (user as any).role;
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
+        session.user.id        = token.id as string;
         (session.user as any).role = token.role;
       }
       return session;
     },
   },
-  pages: { signIn: "/login" },
+  pages:   { signIn: "/login" },
   session: { strategy: "jwt" },
 });
