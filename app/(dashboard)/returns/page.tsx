@@ -113,8 +113,8 @@ export default function ReturnsPage() {
                   {r.returnReason ?? "—"}
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${RETURN_STATUS_COLORS[r.status as any]}`}>
-                    {RETURN_STATUS_LABELS[r.status as any]}
+                  <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${RETURN_STATUS_COLORS[r.status as keyof typeof RETURN_STATUS_COLORS]}`}>
+                    {RETURN_STATUS_LABELS[r.status as keyof typeof RETURN_STATUS_LABELS]}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(r.returnRequestDate)}</td>
