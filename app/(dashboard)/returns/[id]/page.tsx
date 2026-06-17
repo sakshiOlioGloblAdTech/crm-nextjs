@@ -69,7 +69,7 @@ export default function ReturnDetailPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold text-gray-900">Return #{id}</h1>
-            <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${RETURN_STATUS_COLORS[ret.status]}`}>
+            <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${RETURN_STATUS_COLORS[ret.status as keyof typeof RETURN_STATUS_COLORS]}`}>
               {RETURN_STATUS_LABELS[ret.status]}
             </span>
           </div>
