@@ -6,77 +6,69 @@ import Link from "next/link";
 import {
   ArrowLeft, Package, MapPin, CreditCard, User,
   ChevronRight, AlertCircle, CheckCircle2, Truck,
-  XCircle, RefreshCw, Clock,
+  XCircle, RefreshCw, Clock, ChevronDown,
 } from "lucide-react";
 import { formatINR, formatDateTime } from "@/lib/utils";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS, OrderStatus } from "@/types";
 
+// ── Status config ──────────────────────────────────────────
+
 const STATUS_ICONS: Record<string, any> = {
   PAYMENT_PENDING: Clock,
-  PLACED: CheckCircle2,
-  PROCESSING: RefreshCw,
-  SHIPPED: Truck,
-  DELIVERED: CheckCircle2,
-  COMPLETED: CheckCircle2,
-  CANCELLED: XCircle,
-  REFUNDED: RefreshCw,
+  PLACED:          CheckCircle2,
+  PROCESSING:      RefreshCw,
+  SHIPPED:         Truck,
+  DELIVERED:       CheckCircle2,
+  COMPLETED:       CheckCircle2,
+  CANCELLED:       XCircle,
+  REFUNDED:        RefreshCw,
 };
 
 const STATUS_TIMELINE = [
-  "PAYMENT_PENDING",
-  "PLACED",
-  "PROCESSING",
-  "SHIPPED",
-  "DELIVERED",
-  "COMPLETED",
+  "PAYMENT_PENDING", "PLACED", "PROCESSING", "SHIPPED", "DELIVERED", "COMPLETED",
 ] as const;
 
-const NEXT_STATUSES: Record<string, { value: string; label: string; cls: string; icon: any }[]> = {
+const NEXT_STATUSES: Record<string, {
+  value: string; label: string;
+  cls: string; icon: any;
+}[]> = {
   PAYMENT_PENDING: [
-    { value: "PLACED",    label: "Confirm Order",    icon: CheckCircle2, cls: "btn-blue"   },
-    { value: "CANCELLED", label: "Cancel Order",     icon: XCircle,      cls: "btn-danger" },
+    { value: "PLACED",    label: "Confirm Order",   icon: CheckCircle2, cls: "bg-blue-600 hover:bg-blue-700 text-white" },
+    { value: "CANCELLED", label: "Cancel Order",    icon: XCircle,      cls: "bg-white border border-red-200 text-red-600 hover:bg-red-50" },
   ],
   PLACED: [
-    { value: "PROCESSING", label: "Start Processing", icon: RefreshCw,    cls: "btn-amber"  },
-    { value: "CANCELLED",  label: "Cancel Order",     icon: XCircle,      cls: "btn-danger" },
+    { value: "PROCESSING", label: "Start Processing", icon: RefreshCw,    cls: "bg-amber-500 hover:bg-amber-600 text-white" },
+    { value: "CANCELLED",  label: "Cancel Order",     icon: XCircle,      cls: "bg-white border border-red-200 text-red-600 hover:bg-red-50" },
   ],
   PROCESSING: [
-    { value: "SHIPPED",   label: "Mark as Shipped",  icon: Truck,        cls: "btn-green"  },
-    { value: "CANCELLED", label: "Cancel Order",     icon: XCircle,      cls: "btn-danger" },
+    { value: "SHIPPED",   label: "Mark as Shipped",   icon: Truck,        cls: "bg-emerald-600 hover:bg-emerald-700 text-white" },
+    { value: "CANCELLED", label: "Cancel Order",      icon: XCircle,      cls: "bg-white border border-red-200 text-red-600 hover:bg-red-50" },
   ],
   SHIPPED: [
-    { value: "DELIVERED", label: "Mark as Delivered", icon: CheckCircle2, cls: "btn-green" },
+    { value: "DELIVERED", label: "Mark as Delivered", icon: CheckCircle2, cls: "bg-emerald-600 hover:bg-emerald-700 text-white" },
   ],
   DELIVERED: [
-    { value: "COMPLETED", label: "Mark as Completed", icon: CheckCircle2, cls: "btn-blue"   },
-    { value: "REFUNDED",  label: "Refund Order",      icon: RefreshCw,    cls: "btn-purple" },
+    { value: "COMPLETED", label: "Mark as Completed", icon: CheckCircle2, cls: "bg-blue-600 hover:bg-blue-700 text-white" },
+    { value: "REFUNDED",  label: "Refund Order",      icon: RefreshCw,    cls: "bg-purple-600 hover:bg-purple-700 text-white" },
   ],
   COMPLETED: [
-    { value: "REFUNDED", label: "Refund Order", icon: RefreshCw, cls: "btn-purple" },
+    { value: "REFUNDED",  label: "Refund Order",      icon: RefreshCw,    cls: "bg-purple-600 hover:bg-purple-700 text-white" },
   ],
   CANCELLED: [],
-  REFUNDED: [],
+  REFUNDED:  [],
 };
 
-const BTN_CLASSES: Record<string, string> = {
-  "btn-blue":   "bg-blue-600 hover:bg-blue-700 text-white border border-blue-600",
-  "btn-green":  "bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-600",
-  "btn-amber":  "bg-amber-500 hover:bg-amber-600 text-white border border-amber-500",
-  "btn-purple": "bg-purple-600 hover:bg-purple-700 text-white border border-purple-600",
-  "btn-danger": "bg-white hover:bg-red-50 text-red-600 border border-red-300",
-};
-
-const CARD = "bg-white rounded-2xl border border-gray-200";
+// ── Component ──────────────────────────────────────────────
 
 export default function OrderDetailPage() {
-  const { id } = useParams();
-  const [order, setOrder]               = useState<any>(null);
-  const [loading, setLoading]           = useState(true);
-  const [updating, setUpdating]         = useState(false);
-  const [showCancel, setShowCancel]     = useState(false);
+  const { id }   = useParams();
+  const [order,        setOrder]        = useState<any>(null);
+  const [loading,      setLoading]      = useState(true);
+  const [updating,     setUpdating]     = useState(false);
+  const [showCancel,   setShowCancel]   = useState(false);
   const [cancelReason, setCancelReason] = useState("");
-  const [error, setError]               = useState("");
-  const [success, setSuccess]           = useState("");
+  const [error,        setError]        = useState("");
+  const [success,      setSuccess]      = useState("");
 
   useEffect(() => {
     fetch(`/api/orders/${id}`)
@@ -91,85 +83,87 @@ export default function OrderDetailPage() {
 
   async function doUpdate(newStatus: string, reason: string) {
     setUpdating(true); setError(""); setSuccess("");
-    const res = await fetch(`/api/orders/${id}/status`, {
+    const res  = await fetch(`/api/orders/${id}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: newStatus, cancellationReason: reason }),
     });
     const data = await res.json();
     setUpdating(false);
-    if (!res.ok) { setError(data.error ?? "Failed to update"); return; }
+    if (!res.ok) { setError(data.error ?? "Failed to update status"); return; }
     setOrder((p: any) => ({ ...p, orderStatus: newStatus }));
-    setSuccess(`Status updated to "${ORDER_STATUS_LABELS[newStatus as OrderStatus]}"`);
+    setSuccess(`Status updated to ${ORDER_STATUS_LABELS[newStatus as OrderStatus]}`);
     setShowCancel(false); setCancelReason("");
     setTimeout(() => setSuccess(""), 4000);
   }
 
+  // ── Loading ──
   if (loading) return (
-    <div className="flex flex-col items-center justify-center min-h-[300px] gap-3">
-      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      <p className="text-sm text-gray-400">Loading order...</p>
+    <div className="flex flex-col items-center justify-center h-72 gap-3">
+      <div className="w-9 h-9 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <p className="text-sm text-gray-400">Loading order details...</p>
     </div>
   );
 
   if (!order || order.error) return (
-    <div className="flex flex-col items-center justify-center min-h-[300px] gap-2">
-      <p className="font-medium text-gray-600">Order not found</p>
+    <div className="flex flex-col items-center justify-center h-72 gap-3">
+      <p className="text-gray-500 font-medium">Order not found</p>
       <Link href="/orders" className="text-sm text-blue-600 hover:underline">← Back to orders</Link>
     </div>
   );
 
-  const nextActions = NEXT_STATUSES[order.orderStatus] ?? [];
-  const timelineIdx = STATUS_TIMELINE.indexOf(order.orderStatus as any);
-  const isCancelled = order.orderStatus === "CANCELLED";
-  const isRefunded  = order.orderStatus === "REFUNDED";
-  const StatusIcon  = STATUS_ICONS[order.orderStatus];
+  const nextActions  = NEXT_STATUSES[order.orderStatus] ?? [];
+  const timelineIdx  = STATUS_TIMELINE.indexOf(order.orderStatus as any);
+  const isCancelled  = order.orderStatus === "CANCELLED";
+  const isRefunded   = order.orderStatus === "REFUNDED";
+  const StatusIcon   = STATUS_ICONS[order.orderStatus];
 
   return (
-    <div className="max-w-5xl mx-auto pb-16 space-y-4">
+    <div className="max-w-6xl space-y-5 pb-12">
 
-      {/* HEADER */}
-      <div className="flex items-center gap-3 py-2">
+      {/* ════ HEADER ════ */}
+      <div className="flex items-start gap-3">
         <Link href="/orders"
-          className="flex items-center justify-center w-9 h-9 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-500 transition-colors shrink-0">
-          <ArrowLeft size={16} />
+          className="mt-1 p-2 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 text-gray-400 transition-all">
+          <ArrowLeft size={17} />
         </Link>
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-bold text-gray-900">
-              Order&nbsp;
-              <span className="font-mono text-blue-600 font-bold">#{order.orderNumber}</span>
+        <div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-2xl font-bold text-gray-900">
+              Order <span className="text-blue-600 font-mono">#{order.orderNumber}</span>
             </h1>
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${ORDER_STATUS_COLORS[order.orderStatus as OrderStatus]}`}>
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${ORDER_STATUS_COLORS[order.orderStatus as OrderStatus]}`}>
               {StatusIcon && <StatusIcon size={11} />}
               {ORDER_STATUS_LABELS[order.orderStatus as OrderStatus]}
             </span>
           </div>
-          <p className="text-xs text-gray-400 mt-0.5">Placed {formatDateTime(order.orderDate)}</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Placed on {formatDateTime(order.orderDate)}
+          </p>
         </div>
       </div>
 
-      {/* ALERTS */}
+      {/* ════ ALERTS ════ */}
       {error && (
-        <div className="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
-          <AlertCircle size={15} className="shrink-0" />
-          {error}
+        <div className="flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+          <AlertCircle size={16} className="shrink-0" />
+          <span>{error}</span>
         </div>
       )}
       {success && (
-        <div className="flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
-          <CheckCircle2 size={15} className="shrink-0" />
-          {success}
+        <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">
+          <CheckCircle2 size={16} className="shrink-0" />
+          <span>{success}</span>
         </div>
       )}
 
-      {/* STATUS ACTIONS */}
+      {/* ════ STATUS ACTION BAR ════ */}
       {nextActions.length > 0 && (
-        <div className={`${CARD} p-5`}>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
-            Update Status
+        <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            Update Order Status
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2.5">
             {nextActions.map((action) => {
               const Icon = action.icon;
               return (
@@ -177,11 +171,11 @@ export default function OrderDetailPage() {
                   key={action.value}
                   onClick={() => updateStatus(action.value)}
                   disabled={updating}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 ${BTN_CLASSES[action.cls]}`}
+                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-60 ${action.cls}`}
                 >
                   {updating
-                    ? <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    : <Icon size={14} />
+                    ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    : <Icon size={15} />
                   }
                   {action.label}
                 </button>
@@ -191,10 +185,10 @@ export default function OrderDetailPage() {
         </div>
       )}
 
-      {/* TIMELINE */}
+      {/* ════ ORDER PROGRESS TIMELINE ════ */}
       {!isCancelled && !isRefunded && (
-        <div className={`${CARD} p-5`}>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-5">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-6">
             Order Progress
           </p>
           <div className="flex items-start">
@@ -205,24 +199,26 @@ export default function OrderDetailPage() {
               const isLast  = i === STATUS_TIMELINE.length - 1;
               return (
                 <div key={s} className={`flex items-center ${isLast ? "" : "flex-1"}`}>
-                  <div className="flex flex-col items-center gap-2">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                  {/* Step */}
+                  <div className="flex flex-col items-center gap-2 min-w-[60px]">
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shrink-0 ${
                       current ? "bg-blue-600 text-white ring-4 ring-blue-100"
                       : done   ? "bg-emerald-500 text-white"
-                      :          "bg-gray-100 text-gray-300"
+                      : "bg-gray-100 text-gray-300"
                     }`}>
-                      <Icon size={14} />
+                      <Icon size={16} />
                     </div>
-                    <span className={`text-[11px] font-medium text-center leading-tight whitespace-nowrap ${
+                    <span className={`text-xs font-medium text-center leading-tight ${
                       current ? "text-blue-600"
                       : done   ? "text-emerald-600"
-                      :          "text-gray-300"
+                      : "text-gray-300"
                     }`}>
                       {ORDER_STATUS_LABELS[s as OrderStatus]}
                     </span>
                   </div>
+                  {/* Connector */}
                   {!isLast && (
-                    <div className={`h-px flex-1 mx-2 mb-6 ${
+                    <div className={`h-0.5 flex-1 mx-2 mb-7 rounded-full ${
                       i < timelineIdx ? "bg-emerald-400" : "bg-gray-200"
                     }`} />
                   )}
@@ -233,60 +229,78 @@ export default function OrderDetailPage() {
         </div>
       )}
 
-      {/* CANCELLATION */}
+      {/* ════ CANCELLATION BANNER ════ */}
       {isCancelled && (
-        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
-          <XCircle size={18} className="text-red-500 mt-0.5 shrink-0" />
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-5 flex items-start gap-3">
+          <div className="w-9 h-9 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
+            <XCircle size={18} className="text-red-600" />
+          </div>
           <div>
             <p className="font-semibold text-red-800 text-sm">Order Cancelled</p>
             {order.cancellationReason && (
               <p className="text-sm text-red-600 mt-0.5">{order.cancellationReason}</p>
             )}
             {order.cancelledDate && (
-              <p className="text-xs text-red-400 mt-1">on {formatDateTime(order.cancelledDate)}</p>
+              <p className="text-xs text-red-400 mt-1">Cancelled on {formatDateTime(order.cancelledDate)}</p>
             )}
           </div>
         </div>
       )}
 
-      {/* MAIN GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* ════ MAIN CONTENT GRID ════ */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-        {/* LEFT */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* ── LEFT COLUMN ── */}
+        <div className="lg:col-span-2 space-y-5">
 
           {/* Order Items */}
-          <div className={CARD}>
-            <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100">
-              <Package size={15} className="text-gray-400" />
-              <span className="font-semibold text-gray-900 text-sm">
-                Order Items ({order.orderDetails.length})
-              </span>
+          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+            <div className="flex items-center gap-2.5 px-6 py-4 border-b border-gray-100">
+              <div className="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Package size={14} className="text-gray-500" />
+              </div>
+              <h2 className="font-semibold text-gray-900 text-sm">
+                Order Items
+                <span className="ml-2 px-2 py-0.5 bg-gray-100 text-gray-500 rounded-md text-xs font-medium">
+                  {order.orderDetails.length}
+                </span>
+              </h2>
             </div>
+
             <div className="divide-y divide-gray-50">
               {order.orderDetails.map((item: any) => (
-                <div key={item.id} className="flex items-start gap-4 px-5 py-4">
-                  <div className="w-12 h-12 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center shrink-0">
-                    <Package size={18} className="text-gray-300" />
+                <div key={item.id} className="flex items-start gap-4 px-6 py-5">
+                  {/* Product thumb */}
+                  <div className="w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-50 border border-gray-200 rounded-xl flex items-center justify-center shrink-0">
+                    <Package size={20} className="text-gray-300" />
                   </div>
+
+                  {/* Details */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm truncate">{item.productName}</p>
-                    <p className="text-[11px] text-gray-400 font-mono mt-0.5">SKU: {item.sku}</p>
-                    <p className="text-[11px] text-gray-400">Sub# {item.subOrderNumber}</p>
-                    <div className="flex flex-wrap items-center gap-2 mt-2">
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md font-medium">
-                        Qty: {item.quantity}
-                      </span>
-                      <span className="text-xs text-gray-400">× {formatINR(item.unitPrice)}</span>
-                      <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${ORDER_STATUS_COLORS[item.orderStatus as OrderStatus]}`}>
+                    <p className="font-semibold text-gray-900 text-sm">{item.productName}</p>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
+                      <span className="text-xs text-gray-400 font-mono">SKU: {item.sku}</span>
+                      <span className="text-gray-200">·</span>
+                      <span className="text-xs text-gray-400">Sub# {item.subOrderNumber}</span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3 mt-2.5">
+                      <div className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
+                        <span className="text-xs text-gray-500">Qty</span>
+                        <span className="text-xs font-bold text-gray-800">{item.quantity}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">×</span>
+                      <span className="text-xs font-medium text-gray-600">{formatINR(item.unitPrice)}</span>
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${ORDER_STATUS_COLORS[item.orderStatus as OrderStatus]}`}>
                         {ORDER_STATUS_LABELS[item.orderStatus as OrderStatus]}
                       </span>
                     </div>
                   </div>
+
+                  {/* Price */}
                   <div className="text-right shrink-0">
-                    <p className="font-bold text-gray-900 text-sm">{formatINR(item.total)}</p>
+                    <p className="font-bold text-gray-900">{formatINR(item.total)}</p>
                     {item.gstCharges > 0 && (
-                      <p className="text-[11px] text-gray-400 mt-0.5">+GST {formatINR(item.gstCharges)}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">+GST {formatINR(item.gstCharges)}</p>
                     )}
                   </div>
                 </div>
@@ -295,8 +309,8 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Price Breakdown */}
-          <div className={`${CARD} p-5`}>
-            <p className="font-semibold text-gray-900 text-sm mb-4">Price Breakdown</p>
+          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <h2 className="font-semibold text-gray-900 text-sm mb-5">Price Breakdown</h2>
             <div className="space-y-3">
               {[
                 { label: "Item Total",   value: order.itemTotal,   show: true },
@@ -306,68 +320,82 @@ export default function OrderDetailPage() {
                 { label: "SGST",         value: order.sgst,        show: !!order.sgst },
                 { label: "IGST",         value: order.igst,        show: !!order.igst },
               ].filter((r) => r.show).map(({ label, value }) => (
-                <div key={label} className="flex justify-between text-sm">
+                <div key={label} className="flex justify-between items-center text-sm">
                   <span className="text-gray-500">{label}</span>
                   <span className="text-gray-700 font-medium">{formatINR(value)}</span>
                 </div>
               ))}
+
               {order.discount > 0 && (
-                <div className="flex justify-between text-sm text-emerald-600">
-                  <span>Discount {order.promocode ? `(${order.promocode})` : ""}</span>
-                  <span className="font-semibold">− {formatINR(order.discount)}</span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-emerald-600">
+                    Discount {order.promocode ? `(${order.promocode})` : ""}
+                  </span>
+                  <span className="text-emerald-600 font-semibold">
+                    − {formatINR(order.discount)}
+                  </span>
                 </div>
               )}
-              <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
-                <span className="font-bold text-gray-900">Grand Total</span>
-                <span className="font-bold text-gray-900 text-lg">{formatINR(order.grandtotal)}</span>
+
+              <div className="border-t-2 border-gray-100 pt-4 mt-2 flex justify-between items-center">
+                <span className="font-bold text-gray-900 text-base">Grand Total</span>
+                <span className="font-bold text-gray-900 text-xl">{formatINR(order.grandtotal)}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* RIGHT */}
+        {/* ── RIGHT COLUMN ── */}
         <div className="space-y-4">
 
           {/* Customer */}
-          <div className={`${CARD} p-5`}>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
-                <User size={13} className="text-blue-600" />
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center">
+                <User size={15} className="text-blue-600" />
               </div>
-              <p className="font-semibold text-gray-900 text-sm">Customer</p>
+              <h2 className="font-semibold text-gray-900 text-sm">Customer</h2>
             </div>
-            <div className="space-y-1.5">
-              <p className="font-semibold text-gray-900 text-sm">{order.custName}</p>
-              <p className="text-xs text-gray-500">{order.custEmail}</p>
-              <p className="text-xs text-gray-500">{order.custNumber}</p>
+            <div className="space-y-2">
+              <p className="font-semibold text-gray-900">{order.custName}</p>
+              <div className="space-y-1">
+                <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-gray-300 rounded-full" />
+                  {order.custEmail}
+                </p>
+                <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-gray-300 rounded-full" />
+                  {order.custNumber}
+                </p>
+              </div>
               {order.customer && (
                 <Link href={`/customers/${order.customer.id}`}
-                  className="inline-flex items-center gap-1 text-xs text-blue-600 font-semibold hover:underline mt-1">
-                  View profile <ChevronRight size={11} />
+                  className="inline-flex items-center gap-1 text-blue-600 text-xs font-semibold mt-2 hover:underline">
+                  View full profile <ChevronRight size={12} />
                 </Link>
               )}
             </div>
           </div>
 
-          {/* Address */}
-          <div className={`${CARD} p-5`}>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center">
-                <MapPin size={13} className="text-emerald-600" />
+          {/* Delivery Address */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 bg-emerald-50 rounded-xl flex items-center justify-center">
+                <MapPin size={15} className="text-emerald-600" />
               </div>
-              <p className="font-semibold text-gray-900 text-sm">Delivery Address</p>
+              <h2 className="font-semibold text-gray-900 text-sm">Delivery Address</h2>
             </div>
-            <div className="space-y-1 text-xs text-gray-600 leading-relaxed">
+            <div className="space-y-1 text-sm text-gray-600 leading-relaxed">
               <p className="font-semibold text-gray-800">{order.streetAddress}</p>
-              {order.landmarks && <p className="text-gray-400">{order.landmarks}</p>}
+              {order.landmarks && <p className="text-gray-400 text-xs">{order.landmarks}</p>}
               <p>{order.city}, {order.state}</p>
-              <p>{order.country}</p>
-              <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded font-mono text-[11px]">
+              <p className="text-gray-500">{order.country}</p>
+              <div className="flex items-center gap-2 pt-1">
+                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md text-xs font-mono">
                   {order.pincode}
                 </span>
                 {order.addressType && (
-                  <span className="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[11px] font-medium capitalize">
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-xs capitalize font-medium">
                     {order.addressType}
                   </span>
                 )}
@@ -376,17 +404,17 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Payment */}
-          <div className={`${CARD} p-5`}>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-purple-50 rounded-lg flex items-center justify-center">
-                <CreditCard size={13} className="text-purple-600" />
+          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 bg-purple-50 rounded-xl flex items-center justify-center">
+                <CreditCard size={15} className="text-purple-600" />
               </div>
-              <p className="font-semibold text-gray-900 text-sm">Payment</p>
+              <h2 className="font-semibold text-gray-900 text-sm">Payment</h2>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500">Mode</span>
-                <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
                   order.paymentMode === "COD"
                     ? "bg-orange-100 text-orange-700"
                     : "bg-blue-100 text-blue-700"
@@ -394,81 +422,82 @@ export default function OrderDetailPage() {
                   {order.paymentMode ?? "—"}
                 </span>
               </div>
-              <div className="flex items-center justify-between">
+
+              <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500">Status</span>
                 <span className={`text-xs font-bold ${
-                  order.paymentStatus === "Paid" ? "text-emerald-600" : "text-red-500"
+                  order.paymentStatus === "Paid"
+                    ? "text-emerald-600"
+                    : "text-red-500"
                 }`}>
                   {order.paymentStatus ?? "—"}
                 </span>
               </div>
+
               {order.razorpayOrderId && (
-                <div className="pt-2 border-t border-gray-100">
-                  <p className="text-[11px] text-gray-400 mb-1">Razorpay Order ID</p>
-                  <p className="font-mono text-[11px] text-gray-600 break-all bg-gray-50 px-2 py-1.5 rounded-lg">
+                <div className="pt-2 border-t border-gray-100 space-y-1">
+                  <p className="text-xs text-gray-400">Razorpay Order ID</p>
+                  <p className="font-mono text-xs text-gray-600 break-all bg-gray-50 px-2 py-1.5 rounded-lg">
                     {order.razorpayOrderId}
                   </p>
                 </div>
               )}
               {order.razorpayPaymentId && (
-                <div>
-                  <p className="text-[11px] text-gray-400 mb-1">Payment ID</p>
-                  <p className="font-mono text-[11px] text-gray-600 break-all bg-gray-50 px-2 py-1.5 rounded-lg">
+                <div className="space-y-1">
+                  <p className="text-xs text-gray-400">Payment ID</p>
+                  <p className="font-mono text-xs text-gray-600 break-all bg-gray-50 px-2 py-1.5 rounded-lg">
                     {order.razorpayPaymentId}
                   </p>
                 </div>
               )}
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* CANCEL MODAL */}
+      {/* ════ CANCEL MODAL ════ */}
       {showCancel && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-gray-200">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-gray-100">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
-                <XCircle size={20} className="text-red-600" />
+              <div className="w-11 h-11 bg-red-100 rounded-2xl flex items-center justify-center shrink-0">
+                <XCircle size={22} className="text-red-600" />
               </div>
               <div>
-                <p className="font-bold text-gray-900 text-sm">Cancel this order?</p>
-                <p className="text-xs text-gray-400 mt-0.5">This cannot be undone.</p>
+                <h2 className="font-bold text-gray-900">Cancel this order?</h2>
+                <p className="text-xs text-gray-500 mt-0.5">This action cannot be undone.</p>
               </div>
             </div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-              Reason <span className="text-red-500">*</span>
+
+            <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+              Cancellation Reason <span className="text-red-500">*</span>
             </label>
             <textarea
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
               rows={3}
-              placeholder="Why is this order being cancelled?"
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none mb-4"
+              placeholder="e.g. Customer requested cancellation"
+              className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent mb-5 resize-none"
             />
-            <div className="flex gap-2">
-              <button
-                onClick={() => { setShowCancel(false); setCancelReason(""); }}
-                className="flex-1 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
-              >
+
+            <div className="flex gap-3">
+              <button onClick={() => { setShowCancel(false); setCancelReason(""); }}
+                className="flex-1 py-2.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
                 Go Back
               </button>
               <button
                 onClick={() => doUpdate("CANCELLED", cancelReason)}
                 disabled={updating || !cancelReason.trim()}
-                className="flex-1 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-              >
+                className="flex-1 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
                 {updating && (
-                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 )}
-                Yes, Cancel
+                Yes, Cancel Order
               </button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }

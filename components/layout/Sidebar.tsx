@@ -7,7 +7,7 @@ import {
   LayoutDashboard, ShoppingBag, Package, Users, Tag,
   RotateCcw, Shield, BarChart2, Image, Settings,
   ChevronDown, UserCog, Layers, XCircle, RefreshCcw,
-  FileText,
+  FileText, CreditCard, Bell,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -52,9 +52,13 @@ const navGroups = [
   {
     label: "Reports & Config",
     items: [
-      { href: "/reports", label: "Reports", icon: BarChart2 },
-      { href: "/users", label: "Admin Users", icon: UserCog },
-      { href: "/settings", label: "Settings", icon: Settings },
+      { href: "/reports",                  label: "Reports",           icon: BarChart2  },
+      { href: "/users",                    label: "Admin Users",       icon: UserCog    },
+      { href: "/settings",                 label: "Settings",          icon: Settings   },
+      { href: "/settings/taxes",           label: "Tax Rules",         icon: Layers     },
+      { href: "/settings/payments",        label: "Payment Providers", icon: CreditCard },
+      { href: "/settings/notifications",   label: "Notifications",     icon: Bell       },
+      { href: "/products/tags",            label: "Product Tags",      icon: Tag        },
     ],
   },
 ];

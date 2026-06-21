@@ -5,20 +5,14 @@ import { useRouter } from "next/navigation";
 import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { slugify } from "@/lib/utils";
+import { validateForm, hasErrors, ValidationErrors } from "@/lib/validation";
+import { inputClass, textareaClass, selectClass } from "@/components/shared/FormField";
 
 interface Variation {
   id?: number;
-  sku: string;
-  price: string;
-  specialPrice: string;
-  stock: string;
-  weightUnit: string;
-  weight: string;
-  dimensionUnit: string;
-  length: string;
-  width: string;
-  height: string;
-  variationImage: string;
+  sku: string; price: string; specialPrice: string; stock: string;
+  weightUnit: string; weight: string; dimensionUnit: string;
+  length: string; width: string; height: string; variationImage: string;
 }
 
 const emptyVariation = (): Variation => ({
@@ -27,52 +21,61 @@ const emptyVariation = (): Variation => ({
   length: "", width: "", height: "", variationImage: "",
 });
 
-interface Props {
-  initial?: any;
-  mode: "create" | "edit";
-}
+interface Props { initial?: any; mode: "create" | "edit"; }
+
+const FORM_RULES = {
+  subcategoryId:    { required: true,  message: "Please select a subcategory" },
+  productName:      { required: true, minLength: 2, message: "Product name must be at least 2 characters" },
+  shortDescription: { required: true, minLength: 5, message: "Short description must be at least 5 characters" },
+  description:      { required: true, minLength: 10, message: "Full description must be at least 10 characters" },
+};
+
+const VAR_RULES = {
+  sku:   { required: true, message: "SKU is required" },
+  price: { required: true, min: 0.01, message: "Price must be greater than 0" },
+  stock: { required: true, min: 0,    message: "Stock must be 0 or more" },
+};
 
 export default function ProductForm({ initial = {}, mode }: Props) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [categories, setCategories] = useState<any[]>([]);
-  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [loading,          setLoading]          = useState(false);
+  const [serverError,      setServerError]      = useState("");
+  const [categories,       setCategories]       = useState<any[]>([]);
+  const [subcategories,    setSubcategories]    = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [touched,          setTouched]          = useState<Record<string, boolean>>({});
+  const [errors,           setErrors]           = useState<ValidationErrors<any>>({});
+  const [varTouched,       setVarTouched]       = useState<Record<string, boolean>[]>([{}]);
+  const [varErrors,        setVarErrors]        = useState<ValidationErrors<any>[]>([{}]);
+
   const [variations, setVariations] = useState<Variation[]>(
     initial.variations?.length
       ? initial.variations.map((v: any) => ({
-          id: v.id,
-          sku: v.sku ?? "",
-          price: v.price?.toString() ?? "",
-          specialPrice: v.specialPrice?.toString() ?? "",
-          stock: v.stock?.toString() ?? "",
-          weightUnit: v.weightUnit ?? "kg",
-          weight: v.weight?.toString() ?? "",
-          dimensionUnit: v.dimensionUnit ?? "cm",
-          length: v.length?.toString() ?? "",
-          width: v.width?.toString() ?? "",
-          height: v.height?.toString() ?? "",
+          id: v.id, sku: v.sku ?? "", price: v.price?.toString() ?? "",
+          specialPrice: v.specialPrice?.toString() ?? "", stock: v.stock?.toString() ?? "",
+          weightUnit: v.weightUnit ?? "kg", weight: v.weight?.toString() ?? "",
+          dimensionUnit: v.dimensionUnit ?? "cm", length: v.length?.toString() ?? "",
+          width: v.width?.toString() ?? "", height: v.height?.toString() ?? "",
           variationImage: v.variationImage ?? "",
         }))
       : [emptyVariation()]
   );
 
   const [form, setForm] = useState({
-    subcategoryId: initial.subcategoryId?.toString() ?? "",
-    productName: initial.productName ?? "",
-    urlSlug: initial.urlSlug ?? "",
-    productId: initial.productId ?? "",
-    shortDescription: initial.shortDescription ?? "",
-    description: initial.description ?? "",
-    altTag: initial.altTag ?? "",
-    metaTitle: initial.metaTitle ?? "",
+    subcategoryId:   initial.subcategoryId?.toString() ?? "",
+    productName:     initial.productName     ?? "",
+    urlSlug:         initial.urlSlug         ?? "",
+    productId:       initial.productId       ?? "",
+    shortDescription:initial.shortDescription ?? "",
+    description:     initial.description     ?? "",
+    altTag:          initial.altTag          ?? "",
+    metaTitle:       initial.metaTitle       ?? "",
     metaDescription: initial.metaDescription ?? "",
-    metaKeywords: initial.metaKeywords ?? "",
-    isFeatured: initial.isFeatured ?? false,
-    status: initial.status ?? false,
-    isNew: initial.isNew ?? false,
-    isBestSeller: initial.isBestSeller ?? false,
+    metaKeywords:    initial.metaKeywords    ?? "",
+    isFeatured:      initial.isFeatured      ?? false,
+    status:          initial.status          ?? false,
+    isNew:           initial.isNew           ?? false,
+    isBestSeller:    initial.isBestSeller    ?? false,
   });
 
   useEffect(() => {
@@ -89,113 +92,183 @@ export default function ProductForm({ initial = {}, mode }: Props) {
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value, type } = e.target;
     const newVal = type === "checkbox" ? (e.target as HTMLInputElement).checked : value;
-    setForm((prev) => {
-      const updated = { ...prev, [name]: newVal };
-      if (name === "productName") updated.urlSlug = slugify(value);
-      return updated;
-    });
+    const newForm = { ...form, [name]: newVal };
+    if (name === "productName") newForm.urlSlug = slugify(value);
+    setForm(newForm);
+    if (touched[name]) setErrors(validateForm(newForm, FORM_RULES));
+  }
+
+  function handleBlur(e: React.FocusEvent<any>) {
+    const { name } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setErrors(validateForm(form, FORM_RULES));
   }
 
   function handleVariationChange(index: number, field: keyof Variation, value: string) {
-    setVariations((prev) => prev.map((v, i) => i === index ? { ...v, [field]: value } : v));
+    const newVars = variations.map((v, i) => i === index ? { ...v, [field]: value } : v);
+    setVariations(newVars);
+    if (varTouched[index]?.[field]) {
+      const newVarErrors = [...varErrors];
+      newVarErrors[index] = validateForm(newVars[index], VAR_RULES);
+      setVarErrors(newVarErrors);
+    }
   }
 
-  function addVariation() { setVariations((prev) => [...prev, emptyVariation()]); }
-  function removeVariation(index: number) { setVariations((prev) => prev.filter((_, i) => i !== index)); }
+  function handleVariationBlur(index: number, field: string) {
+    const newVarTouched = [...varTouched];
+    newVarTouched[index] = { ...newVarTouched[index], [field]: true };
+    setVarTouched(newVarTouched);
+    const newVarErrors = [...varErrors];
+    newVarErrors[index] = validateForm(variations[index], VAR_RULES);
+    setVarErrors(newVarErrors);
+  }
+
+  function addVariation() {
+    setVariations((prev) => [...prev, emptyVariation()]);
+    setVarTouched((prev) => [...prev, {}]);
+    setVarErrors((prev) => [...prev, {}]);
+  }
+
+  function removeVariation(index: number) {
+    setVariations((prev) => prev.filter((_, i) => i !== index));
+    setVarTouched((prev) => prev.filter((_, i) => i !== index));
+    setVarErrors((prev) => prev.filter((_, i) => i !== index));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    setError("");
 
-    const url = mode === "edit" ? `/api/products/${initial.id}` : "/api/products";
+    // Touch all form fields
+    const allTouched: Record<string, boolean> = {};
+    Object.keys(form).forEach((k) => (allTouched[k] = true));
+    setTouched(allTouched);
+    const newErrors = validateForm(form, FORM_RULES);
+    setErrors(newErrors);
+
+    // Touch all variation fields
+    const newVarTouched = variations.map(() =>
+      Object.fromEntries(Object.keys(VAR_RULES).map((k) => [k, true]))
+    );
+    setVarTouched(newVarTouched);
+    const newVarErrors = variations.map((v) => validateForm(v, VAR_RULES));
+    setVarErrors(newVarErrors);
+
+    if (hasErrors(newErrors) || newVarErrors.some(hasErrors)) return;
+
+    setLoading(true); setServerError("");
+    const url    = mode === "edit" ? `/api/products/${initial.id}` : "/api/products";
     const method = mode === "edit" ? "PUT" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
+    const res  = await fetch(url, {
+      method, headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, variations }),
     });
-
     const data = await res.json();
     setLoading(false);
-
-    if (!res.ok) { setError(data.error ?? "Something went wrong"); return; }
-    router.push("/products");
-    router.refresh();
+    if (!res.ok) { setServerError(data.error ?? "Something went wrong"); return; }
+    router.push("/products"); router.refresh();
   }
 
-  const inputClass = "w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+  const t  = (f: string) => touched[f];
+  const er = (f: string) => errors[f as keyof typeof errors];
+  const vt = (i: number, f: string) => varTouched[i]?.[f];
+  const ve = (i: number, f: string) => varErrors[i]?.[f as keyof (typeof varErrors)[0]];
+
+  const INPUT_BASE = "w-full px-3 py-2 border rounded-xl text-sm focus:outline-none transition-all";
 
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <Link href="/products" className="p-2 hover:bg-gray-100 rounded-lg text-gray-400">
+        <Link href="/products" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-400">
           <ArrowLeft size={18} />
         </Link>
-        <h1 className="text-xl font-semibold text-gray-900">
-          {mode === "edit" ? `Edit: ${initial.productName}` : "New Product"}
-        </h1>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">
+            {mode === "edit" ? `Edit: ${initial.productName}` : "New Product"}
+          </h1>
+          <p className="text-sm text-gray-400 mt-0.5">Fields marked with <span className="text-red-500">*</span> are required</p>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-        {error && <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg">{error}</div>}
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl" noValidate>
+        {serverError && (
+          <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">{serverError}</div>
+        )}
 
         {/* Basic Info */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="font-medium text-gray-900">Basic Information</h2>
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+          <h2 className="font-semibold text-gray-900 text-sm">Basic Information</h2>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Category *</label>
-              <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className={inputClass}>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Category <span className="text-red-500">*</span></label>
+              <select value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className={selectClass()}>
                 <option value="">Select category</option>
                 {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
             <div>
-              <label className={labelClass}>Sub Category *</label>
-              <select name="subcategoryId" value={form.subcategoryId} onChange={handleChange} required className={inputClass}>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Sub Category <span className="text-red-500">*</span></label>
+              <select name="subcategoryId" value={form.subcategoryId}
+                onChange={handleChange} onBlur={handleBlur}
+                className={selectClass(er("subcategoryId"), t("subcategoryId"))}>
                 <option value="">Select subcategory</option>
                 {subcategories.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
+              {t("subcategoryId") && er("subcategoryId") && <p className="text-xs text-red-500 mt-1">⚠ {er("subcategoryId")}</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Product Name *</label>
-              <input name="productName" value={form.productName} onChange={handleChange} required className={inputClass} placeholder="e.g. Stainless Steel Pan" />
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Product Name <span className="text-red-500">*</span></label>
+              <input name="productName" value={form.productName}
+                onChange={handleChange} onBlur={handleBlur}
+                className={inputClass(er("productName"), t("productName"))}
+                placeholder="e.g. Stainless Steel Pan" />
+              {t("productName") && er("productName") && <p className="text-xs text-red-500 mt-1">⚠ {er("productName")}</p>}
             </div>
             <div>
-              <label className={labelClass}>Product ID / SKU Code</label>
-              <input name="productId" value={form.productId} onChange={handleChange} className={inputClass} placeholder="e.g. SSP-001" />
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Product ID</label>
+              <input name="productId" value={form.productId} onChange={handleChange}
+                className={inputClass()} placeholder="e.g. SSP-001" />
             </div>
           </div>
 
           <div>
-            <label className={labelClass}>URL Slug</label>
-            <input name="urlSlug" value={form.urlSlug} onChange={handleChange} className={inputClass} placeholder="auto-generated from name" />
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">URL Slug</label>
+            <input name="urlSlug" value={form.urlSlug} onChange={handleChange}
+              className={inputClass()} placeholder="auto-generated from name" />
           </div>
 
           <div>
-            <label className={labelClass}>Short Description *</label>
-            <textarea name="shortDescription" value={form.shortDescription} onChange={handleChange} rows={2} required className={inputClass} />
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Short Description <span className="text-red-500">*</span></label>
+            <textarea name="shortDescription" value={form.shortDescription}
+              onChange={handleChange} onBlur={handleBlur} rows={2}
+              className={textareaClass(er("shortDescription"), t("shortDescription"))} />
+            {t("shortDescription") && er("shortDescription") && <p className="text-xs text-red-500 mt-1">⚠ {er("shortDescription")}</p>}
           </div>
+
           <div>
-            <label className={labelClass}>Full Description *</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={5} required className={inputClass} />
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Full Description <span className="text-red-500">*</span></label>
+            <textarea name="description" value={form.description}
+              onChange={handleChange} onBlur={handleBlur} rows={5}
+              className={textareaClass(er("description"), t("description"))} />
+            {t("description") && er("description") && <p className="text-xs text-red-500 mt-1">⚠ {er("description")}</p>}
           </div>
 
           <div className="flex flex-wrap gap-6">
             {[
-              { name: "isFeatured", label: "Featured" },
-              { name: "status", label: "Active" },
-              { name: "isNew", label: "New Arrival" },
-              { name: "isBestSeller", label: "Best Seller" },
+              { name: "isFeatured",  label: "Featured"    },
+              { name: "status",      label: "Active"      },
+              { name: "isNew",       label: "New Arrival" },
+              { name: "isBestSeller",label: "Best Seller" },
             ].map((f) => (
               <label key={f.name} className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" name={f.name} checked={(form as any)[f.name]} onChange={handleChange} className="w-4 h-4 rounded border-gray-300 text-blue-600" />
+                <input type="checkbox" name={f.name} checked={(form as any)[f.name]}
+                  onChange={handleChange} className="w-4 h-4 accent-blue-600" />
                 <span className="text-sm text-gray-700">{f.label}</span>
               </label>
             ))}
@@ -203,22 +276,26 @@ export default function ProductForm({ initial = {}, mode }: Props) {
         </div>
 
         {/* Variations */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-medium text-gray-900">Variations / SKUs</h2>
+            <h2 className="font-semibold text-gray-900 text-sm">Variations / SKUs</h2>
             <button type="button" onClick={addVariation}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
               <Plus size={14} /> Add Variation
             </button>
           </div>
 
           {variations.map((v, i) => (
-            <div key={i} className="border border-gray-100 rounded-xl p-4 space-y-3">
+            <div key={i} className={`border rounded-xl p-4 space-y-3 ${
+              varErrors[i] && Object.values(varErrors[i]).some(Boolean) && varTouched[i] && Object.keys(varTouched[i]).length > 0
+                ? "border-red-200 bg-red-50/30"
+                : "border-gray-100"
+            }`}>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600">Variation {i + 1}</span>
+                <span className="text-sm font-semibold text-gray-600">Variation {i + 1}</span>
                 {variations.length > 1 && (
                   <button type="button" onClick={() => removeVariation(i)}
-                    className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-colors">
+                    className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500">
                     <Trash2 size={14} />
                   </button>
                 )}
@@ -226,44 +303,67 @@ export default function ProductForm({ initial = {}, mode }: Props) {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
-                  <label className={labelClass}>SKU *</label>
-                  <input value={v.sku} onChange={(e) => handleVariationChange(i, "sku", e.target.value)} required className={inputClass} placeholder="SSP-001-RED" />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">SKU <span className="text-red-500">*</span></label>
+                  <input value={v.sku}
+                    onChange={(e) => handleVariationChange(i, "sku", e.target.value)}
+                    onBlur={() => handleVariationBlur(i, "sku")}
+                    className={inputClass(ve(i, "sku"), vt(i, "sku"))}
+                    placeholder="SSP-001-RED" />
+                  {vt(i, "sku") && ve(i, "sku") && <p className="text-xs text-red-500 mt-0.5">⚠ {ve(i, "sku")}</p>}
                 </div>
                 <div>
-                  <label className={labelClass}>Price (₹) *</label>
-                  <input type="number" value={v.price} onChange={(e) => handleVariationChange(i, "price", e.target.value)} required className={inputClass} placeholder="999" />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Price (₹) <span className="text-red-500">*</span></label>
+                  <input type="number" value={v.price}
+                    onChange={(e) => handleVariationChange(i, "price", e.target.value)}
+                    onBlur={() => handleVariationBlur(i, "price")}
+                    className={inputClass(ve(i, "price"), vt(i, "price"))}
+                    placeholder="999" />
+                  {vt(i, "price") && ve(i, "price") && <p className="text-xs text-red-500 mt-0.5">⚠ {ve(i, "price")}</p>}
                 </div>
                 <div>
-                  <label className={labelClass}>Special Price (₹)</label>
-                  <input type="number" value={v.specialPrice} onChange={(e) => handleVariationChange(i, "specialPrice", e.target.value)} className={inputClass} placeholder="799" />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Special Price (₹)</label>
+                  <input type="number" value={v.specialPrice}
+                    onChange={(e) => handleVariationChange(i, "specialPrice", e.target.value)}
+                    className={inputClass()} placeholder="799" />
                 </div>
                 <div>
-                  <label className={labelClass}>Stock *</label>
-                  <input type="number" value={v.stock} onChange={(e) => handleVariationChange(i, "stock", e.target.value)} required className={inputClass} placeholder="50" />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Stock <span className="text-red-500">*</span></label>
+                  <input type="number" value={v.stock}
+                    onChange={(e) => handleVariationChange(i, "stock", e.target.value)}
+                    onBlur={() => handleVariationBlur(i, "stock")}
+                    className={inputClass(ve(i, "stock"), vt(i, "stock"))}
+                    placeholder="50" />
+                  {vt(i, "stock") && ve(i, "stock") && <p className="text-xs text-red-500 mt-0.5">⚠ {ve(i, "stock")}</p>}
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className={labelClass}>Weight</label>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Weight</label>
                   <div className="flex gap-2">
-                    <input type="number" value={v.weight} onChange={(e) => handleVariationChange(i, "weight", e.target.value)} className={inputClass} placeholder="1.5" />
-                    <select value={v.weightUnit} onChange={(e) => handleVariationChange(i, "weightUnit", e.target.value)} className="px-2 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none">
+                    <input type="number" value={v.weight}
+                      onChange={(e) => handleVariationChange(i, "weight", e.target.value)}
+                      className={inputClass()} placeholder="1.5" />
+                    <select value={v.weightUnit}
+                      onChange={(e) => handleVariationChange(i, "weightUnit", e.target.value)}
+                      className="px-2 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none">
                       <option>kg</option><option>g</option>
                     </select>
                   </div>
                 </div>
                 <div>
-                  <label className={labelClass}>Dimensions (L × W × H)</label>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Dimensions (L × W × H)</label>
                   <div className="flex gap-1">
-                    <input type="number" value={v.length} onChange={(e) => handleVariationChange(i, "length", e.target.value)} className={inputClass} placeholder="L" />
-                    <input type="number" value={v.width} onChange={(e) => handleVariationChange(i, "width", e.target.value)} className={inputClass} placeholder="W" />
-                    <input type="number" value={v.height} onChange={(e) => handleVariationChange(i, "height", e.target.value)} className={inputClass} placeholder="H" />
+                    <input type="number" value={v.length} onChange={(e) => handleVariationChange(i, "length", e.target.value)} className={inputClass()} placeholder="L" />
+                    <input type="number" value={v.width}  onChange={(e) => handleVariationChange(i, "width",  e.target.value)} className={inputClass()} placeholder="W" />
+                    <input type="number" value={v.height} onChange={(e) => handleVariationChange(i, "height", e.target.value)} className={inputClass()} placeholder="H" />
                   </div>
                 </div>
                 <div>
-                  <label className={labelClass}>Image URL</label>
-                  <input value={v.variationImage} onChange={(e) => handleVariationChange(i, "variationImage", e.target.value)} className={inputClass} placeholder="https://..." />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Variation Image URL</label>
+                  <input value={v.variationImage}
+                    onChange={(e) => handleVariationChange(i, "variationImage", e.target.value)}
+                    className={inputClass()} placeholder="https://..." />
                 </div>
               </div>
             </div>
@@ -271,24 +371,24 @@ export default function ProductForm({ initial = {}, mode }: Props) {
         </div>
 
         {/* SEO */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="font-medium text-gray-900">SEO</h2>
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+          <h2 className="font-semibold text-gray-900 text-sm">SEO</h2>
           <div>
-            <label className={labelClass}>Meta Title</label>
-            <input name="metaTitle" value={form.metaTitle} onChange={handleChange} className={inputClass} />
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Meta Title</label>
+            <input name="metaTitle" value={form.metaTitle} onChange={handleChange} className={inputClass()} />
           </div>
           <div>
-            <label className={labelClass}>Meta Description</label>
-            <textarea name="metaDescription" value={form.metaDescription} onChange={handleChange} rows={2} className={inputClass} />
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Meta Description</label>
+            <textarea name="metaDescription" value={form.metaDescription} onChange={handleChange} rows={2} className={textareaClass()} />
           </div>
           <div>
-            <label className={labelClass}>Meta Keywords</label>
-            <input name="metaKeywords" value={form.metaKeywords} onChange={handleChange} className={inputClass} placeholder="keyword1, keyword2" />
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Meta Keywords</label>
+            <input name="metaKeywords" value={form.metaKeywords} onChange={handleChange} className={inputClass()} placeholder="keyword1, keyword2" />
           </div>
         </div>
 
         <button type="submit" disabled={loading}
-          className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors">
+          className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
           <Save size={16} />
           {loading ? "Saving..." : mode === "edit" ? "Update Product" : "Create Product"}
         </button>
