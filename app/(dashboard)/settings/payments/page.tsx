@@ -11,11 +11,13 @@ const PROVIDERS = [
 
 const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
 
-function Toggle({ active, onClick }: { active: boolean; onClick: () => void }) {
+// Separate Toggle component using inline styles — bypasses Tailwind dynamic class issue
+function Toggle({ active, disabled, onClick }: { active: boolean; disabled?: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       style={{
         display:         "inline-flex",
         alignItems:      "center",
@@ -24,10 +26,11 @@ function Toggle({ active, onClick }: { active: boolean; onClick: () => void }) {
         borderRadius:    "13px",
         backgroundColor: active ? "#2563EB" : "#D1D5DB",
         border:          "none",
-        cursor:          "pointer",
+        cursor:          disabled ? "not-allowed" : "pointer",
         padding:         "3px",
         transition:      "background-color 0.2s ease",
         flexShrink:      0,
+        opacity:         disabled ? 0.6 : 1,
       }}
     >
       <div style={{
@@ -44,11 +47,12 @@ function Toggle({ active, onClick }: { active: boolean; onClick: () => void }) {
 }
 
 export default function PaymentProvidersPage() {
-  const [providers, setProviders] = useState<any[]>([]);
-  const [loading,   setLoading]   = useState(true);
-  const [saving,    setSaving]    = useState<string | null>(null);
-  const [success,   setSuccess]   = useState<string | null>(null);
-  const [configs,   setConfigs]   = useState<Record<string, any>>({});
+  const [providers,    setProviders]    = useState<any[]>([]);
+  const [loading,      setLoading]      = useState(true);
+  const [saving,       setSaving]       = useState<string | null>(null);
+  const [success,      setSuccess]      = useState<string | null>(null);
+  const [error,        setError]        = useState<string | null>(null);
+  const [configs,      setConfigs]      = useState<Record<string, any>>({});
 
   useEffect(() => { load(); }, []);
 
@@ -69,29 +73,98 @@ export default function PaymentProvidersPage() {
     setLoading(false);
   }
 
-  async function handleSave(providerName: string, isActive: boolean, isDefault: boolean) {
-    setSaving(providerName);
-    const existing = providers.find((p) => p.name === providerName);
-    const url      = existing ? `/api/payment-providers/${existing.id}` : "/api/payment-providers";
-    const method   = existing ? "PUT" : "POST";
-    const pDef     = PROVIDERS.find((p) => p.name === providerName)!;
+  async function handleToggle(providerName: string, currentlyActive: boolean) {
+    const newActive = !currentlyActive;
+    const existing  = providers.find((p) => p.name === providerName);
+    const pDef      = PROVIDERS.find((p) => p.name === providerName)!;
 
-    await fetch(url, {
+    // Optimistically update UI immediately
+    setProviders((prev) =>
+      prev.map((p) => p.name === providerName ? { ...p, isActive: newActive } : p)
+    );
+
+    setSaving(providerName);
+    setError(null);
+
+    const url    = existing ? `/api/payment-providers/${existing.id}` : "/api/payment-providers";
+    const method = existing ? "PUT" : "POST";
+
+    const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name:        providerName,
         displayName: pDef.displayName,
-        isActive,
-        isDefault,
+        isActive:    newActive,
+        isDefault:   existing?.isDefault ?? false,
         config:      configs[providerName] ?? {},
         description: pDef.desc,
       }),
     });
 
     setSaving(null);
+
+    if (!res.ok) {
+      // Revert UI if API failed
+      setProviders((prev) =>
+        prev.map((p) => p.name === providerName ? { ...p, isActive: currentlyActive } : p)
+      );
+      setError(`Failed to update ${pDef.displayName}`);
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+
+    // Reload fresh data from server
+    load();
     setSuccess(providerName);
-    setTimeout(() => setSuccess(null), 3000);
+    setTimeout(() => setSuccess(null), 2000);
+  }
+
+  async function handleSaveConfig(providerName: string) {
+    const existing  = providers.find((p) => p.name === providerName);
+    const pDef      = PROVIDERS.find((p) => p.name === providerName)!;
+    if (!existing) return;
+
+    setSaving(providerName);
+    const res = await fetch(`/api/payment-providers/${existing.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name:        providerName,
+        displayName: pDef.displayName,
+        isActive:    existing.isActive,
+        isDefault:   existing.isDefault,
+        config:      configs[providerName] ?? {},
+        description: pDef.desc,
+      }),
+    });
+
+    setSaving(null);
+    if (res.ok) {
+      setSuccess(providerName);
+      setTimeout(() => setSuccess(null), 2000);
+    }
+  }
+
+  async function handleSetDefault(providerName: string) {
+    const existing = providers.find((p) => p.name === providerName);
+    if (!existing) return;
+    const pDef = PROVIDERS.find((p) => p.name === providerName)!;
+
+    setSaving(providerName);
+    await fetch(`/api/payment-providers/${existing.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name:        providerName,
+        displayName: pDef.displayName,
+        isActive:    existing.isActive,
+        isDefault:   !existing.isDefault,
+        config:      configs[providerName] ?? {},
+        description: pDef.desc,
+      }),
+    });
+    setSaving(null);
     load();
   }
 
@@ -110,6 +183,12 @@ export default function PaymentProvidersPage() {
         </p>
       </div>
 
+      {error && (
+        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl">
+          {error}
+        </div>
+      )}
+
       <div className="space-y-4">
         {PROVIDERS.map((pDef) => {
           const existing  = providers.find((p) => p.name === pDef.name);
@@ -119,11 +198,12 @@ export default function PaymentProvidersPage() {
           const isSuccess = success === pDef.name;
 
           return (
-            <div key={pDef.name}
+            <div
+              key={pDef.name}
               className="bg-white rounded-2xl p-6 transition-all"
               style={{ border: isActive ? "2px solid #BFDBFE" : "1px solid #E5E7EB" }}
             >
-              {/* Header row */}
+              {/* Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-2xl">
@@ -141,17 +221,21 @@ export default function PaymentProvidersPage() {
                       Default
                     </span>
                   )}
+
+                  {/* Toggle */}
                   <Toggle
                     active={isActive}
-                    onClick={() => handleSave(pDef.name, !isActive, isDefault)}
+                    disabled={isSaving}
+                    onClick={() => handleToggle(pDef.name, isActive)}
                   />
-                  <span className="text-sm font-medium text-gray-600 min-w-[60px]">
-                    {isSaving ? "Saving..." : isActive ? "Enabled" : "Disabled"}
+
+                  <span className="text-sm font-medium min-w-[70px]" style={{ color: isSaving ? "#9CA3AF" : isActive ? "#059669" : "#6B7280" }}>
+                    {isSaving ? "Saving..." : isActive ? "● Enabled" : "○ Disabled"}
                   </span>
                 </div>
               </div>
 
-              {/* Config fields — only show when active and has fields */}
+              {/* Config fields */}
               {isActive && pDef.fields.length > 0 && (
                 <div className="mt-5 pt-5 border-t border-gray-100 space-y-4">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -183,14 +267,14 @@ export default function PaymentProvidersPage() {
                       <input
                         type="checkbox"
                         checked={isDefault}
-                        onChange={() => handleSave(pDef.name, isActive, !isDefault)}
+                        onChange={() => handleSetDefault(pDef.name)}
                         className="w-4 h-4 accent-blue-600"
                       />
                       <span className="text-sm text-gray-700">Set as Default</span>
                     </label>
 
                     <button
-                      onClick={() => handleSave(pDef.name, isActive, isDefault)}
+                      onClick={() => handleSaveConfig(pDef.name)}
                       disabled={isSaving}
                       className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50 transition-colors"
                     >
@@ -204,7 +288,6 @@ export default function PaymentProvidersPage() {
                 </div>
               )}
 
-              {/* Success message */}
               {isSuccess && (
                 <div className="flex items-center gap-2 mt-3 text-xs text-emerald-600 font-semibold">
                   <CheckCircle2 size={13} /> Saved successfully
