@@ -10,10 +10,10 @@ import { RETURN_STATUS_LABELS, RETURN_STATUS_COLORS } from "@/types";
 const ACTION_BUTTONS: Record<string, { value: string; label: string; style: string }[]> = {
   PENDING: [
     { value: "APPROVED",  label: "Approve Return", style: "bg-emerald-600 hover:bg-emerald-700 text-white" },
-    { value: "REJECTED",  label: "Reject Return",  style: "bg-white hover:bg-red-50 text-red-600 border border-red-200" },
+    { value: "REJECTED",  label: "Reject Return",  style: "bg-surface hover:bg-red-50 text-red-600 border border-red-200" },
   ],
   APPROVED: [
-    { value: "COMPLETED", label: "Mark Completed & Refunded", style: "bg-blue-600 hover:bg-blue-700 text-white" },
+    { value: "COMPLETED", label: "Mark Completed & Refunded", style: "bg-brand-600 hover:bg-brand-700 text-white" },
   ],
   REJECTED: [], COMPLETED: [], CANCELLED: [],
 };
@@ -52,7 +52,7 @@ export default function ReturnDetailPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-7 h-7 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -82,14 +82,14 @@ export default function ReturnDetailPage() {
 
       {/* Actions */}
       {actions.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-4 space-y-3">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-4 mb-4 space-y-3">
           <p className="text-sm font-medium text-gray-700">Take Action</p>
           <div className="flex flex-wrap gap-3 items-end">
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Refund Amount (₹)</label>
               <input type="number" value={refundAmt} onChange={(e) => setRefundAmt(e.target.value)}
                 placeholder="Enter refund amount"
-                className="px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48" />
+                className="px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-48" />
             </div>
             <div className="flex gap-2 flex-wrap">
               {actions.map((a) => (
@@ -106,10 +106,10 @@ export default function ReturnDetailPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Customer */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
-              <User size={13} className="text-blue-600" />
+            <div className="w-7 h-7 bg-brand-50 rounded-lg flex items-center justify-center">
+              <User size={13} className="text-brand-600" />
             </div>
             <h2 className="text-sm font-semibold text-gray-900">Customer</h2>
           </div>
@@ -121,7 +121,7 @@ export default function ReturnDetailPage() {
         </div>
 
         {/* Product */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-7 h-7 bg-orange-50 rounded-lg flex items-center justify-center">
               <Package size={13} className="text-orange-600" />
@@ -137,7 +137,7 @@ export default function ReturnDetailPage() {
         </div>
 
         {/* Return Info */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-4">
           <h2 className="text-sm font-semibold text-gray-900 mb-3">Return Details</h2>
           <div className="text-sm space-y-2.5">
             <div className="flex justify-between">
@@ -165,10 +165,10 @@ export default function ReturnDetailPage() {
 
         {/* Linked Order */}
         {ret.orderDetail?.orderMaster && (
-          <div className="bg-white border border-gray-200 rounded-2xl p-4">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-4">
             <h2 className="text-sm font-semibold text-gray-900 mb-3">Linked Order</h2>
             <div className="text-sm space-y-2">
-              <p className="font-mono text-blue-600 text-xs">#{ret.orderDetail.orderMaster.orderNumber}</p>
+              <p className="font-mono text-brand-600 text-xs">#{ret.orderDetail.orderMaster.orderNumber}</p>
               <p className="text-gray-500 text-xs">
                 Total: <strong className="text-gray-900">{formatINR(Number(ret.orderDetail.orderMaster.grandtotal))}</strong>
               </p>
@@ -176,7 +176,7 @@ export default function ReturnDetailPage() {
                 Payment: <strong className="text-gray-700">{ret.orderDetail.orderMaster.paymentMode}</strong>
               </p>
               <Link href={`/orders/${ret.orderDetail.orderMaster.id}`}
-                className="inline-flex items-center gap-1 text-blue-600 text-xs hover:underline font-medium mt-1">
+                className="inline-flex items-center gap-1 text-brand-600 text-xs hover:underline font-medium mt-1">
                 View full order →
               </Link>
             </div>

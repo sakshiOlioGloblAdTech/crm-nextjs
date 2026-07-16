@@ -63,23 +63,23 @@ export default function PromocodesPage() {
           <p className="text-sm text-gray-500 mt-0.5">{promos.length} total codes</p>
         </div>
         <Link href="/promocodes/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors">
+          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors">
           <Plus size={15} /> New Promo Code
         </Link>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <div className="bg-surface rounded-2xl border border-gray-200 overflow-hidden">
         <div className="flex flex-wrap items-center gap-3 p-4 border-b border-gray-100">
           <div className="relative flex-1 min-w-[200px] max-w-xs">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input type="text" placeholder="Search code or description..."
               value={search} onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
           </div>
           <div className="flex items-center gap-2">
             <Filter size={14} className="text-gray-400" />
             <select value={status} onChange={(e) => setStatus(e.target.value)}
-              className="px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+              className="px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
               <option value="">All Status</option>
               <option value="true">Active</option>
               <option value="false">Inactive</option>
@@ -136,7 +136,7 @@ export default function PromocodesPage() {
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
                       {p.isFirstOrder  && <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded text-xs font-medium">First order</span>}
-                      {p.isProduct     && <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium">Product</span>}
+                      {p.isProduct     && <span className="px-1.5 py-0.5 bg-brand-100 text-brand-700 rounded text-xs font-medium">Product</span>}
                       {p.isSubcategory && <span className="px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded text-xs font-medium">Subcategory</span>}
                       {!p.isFirstOrder && !p.isProduct && !p.isSubcategory &&
                         <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">Global</span>}
@@ -152,7 +152,7 @@ export default function PromocodesPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5 justify-end">
                       <Link href={`/promocodes/${p.id}/edit`}
-                        className="p-1.5 hover:bg-blue-50 rounded-lg text-gray-400 hover:text-blue-600 transition-colors">
+                        className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                         <Pencil size={14} />
                       </Link>
                       <button onClick={() => handleDelete(p.id, p.promocode)} disabled={deleting === p.id}

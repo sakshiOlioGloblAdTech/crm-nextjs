@@ -75,7 +75,7 @@ export default function SettingsPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-7 h-7 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -97,10 +97,10 @@ export default function SettingsPage() {
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-5" noValidate>
 
         {/* Email Notifications */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
-              <Settings size={13} className="text-blue-600" />
+            <div className="w-7 h-7 bg-brand-50 rounded-lg flex items-center justify-center">
+              <Settings size={13} className="text-brand-600" />
             </div>
             <h2 className="font-semibold text-gray-900 text-sm">Email Notifications</h2>
           </div>
@@ -134,7 +134,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Delivery */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 space-y-4">
           <h2 className="font-semibold text-gray-900 text-sm mb-2">Delivery Charges</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -155,7 +155,7 @@ export default function SettingsPage() {
         </div>
 
         <button type="submit" disabled={saving}
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50">
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50">
           <Save size={15} />
           {saving ? "Saving..." : "Save Settings"}
         </button>

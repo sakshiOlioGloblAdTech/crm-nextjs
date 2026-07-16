@@ -9,7 +9,7 @@ const PROVIDERS = [
   { name: "UPI",      displayName: "UPI Direct",       desc: "Accept UPI payments (Google Pay, PhonePe, Paytm)", icon: "📱", fields: ["UPI ID", "Merchant Name"] },
 ];
 
-const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500";
 
 // Separate Toggle component using inline styles — bypasses Tailwind dynamic class issue
 function Toggle({ active, disabled, onClick }: { active: boolean; disabled?: boolean; onClick: () => void }) {
@@ -170,7 +170,7 @@ export default function PaymentProvidersPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-7 h-7 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -200,7 +200,7 @@ export default function PaymentProvidersPage() {
           return (
             <div
               key={pDef.name}
-              className="bg-white rounded-2xl p-6 transition-all"
+              className="bg-surface rounded-2xl p-6 transition-all"
               style={{ border: isActive ? "2px solid #BFDBFE" : "1px solid #E5E7EB" }}
             >
               {/* Header */}
@@ -268,7 +268,7 @@ export default function PaymentProvidersPage() {
                         type="checkbox"
                         checked={isDefault}
                         onChange={() => handleSetDefault(pDef.name)}
-                        className="w-4 h-4 accent-blue-600"
+                        className="w-4 h-4 accent-brand-600"
                       />
                       <span className="text-sm text-gray-700">Set as Default</span>
                     </label>
@@ -276,7 +276,7 @@ export default function PaymentProvidersPage() {
                     <button
                       onClick={() => handleSaveConfig(pDef.name)}
                       disabled={isSaving}
-                      className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50 transition-colors"
+                      className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50 transition-colors"
                     >
                       {isSaving
                         ? <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />

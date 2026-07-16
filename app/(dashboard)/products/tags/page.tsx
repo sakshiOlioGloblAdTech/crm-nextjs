@@ -66,19 +66,19 @@ export default function ProductTagsPage() {
           <h1 className="text-xl font-bold text-gray-900">Product Tags</h1>
           <p className="text-sm text-gray-400 mt-0.5">Tag products for better search and filtering</p>
         </div>
-        <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl">
+        <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl">
           <Plus size={15} /> New Tag
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-5">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 mb-5">
           <h2 className="font-semibold text-gray-900 mb-4">Create New Tag</h2>
           <div className="flex flex-wrap items-end gap-4">
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">Tag Name *</label>
               <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                 placeholder="e.g. Summer Sale, New Arrival, Trending" />
             </div>
             <div>
@@ -93,7 +93,7 @@ export default function ProductTagsPage() {
             </div>
             <div className="flex gap-2">
               <button onClick={handleSave} disabled={saving || !form.name.trim()}
-                className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50">
+                className="inline-flex items-center gap-2 px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50">
                 <Save size={14} /> {saving ? "Saving..." : "Create Tag"}
               </button>
               <button onClick={() => setShowForm(false)} className="inline-flex items-center gap-2 px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-semibold rounded-xl">
@@ -118,12 +118,12 @@ export default function ProductTagsPage() {
       {loading ? (
         <div className="py-12 text-center text-gray-400">Loading...</div>
       ) : tags.length === 0 ? (
-        <div className="py-16 text-center bg-white border border-gray-200 rounded-2xl">
+        <div className="py-16 text-center bg-surface border border-gray-200 rounded-2xl">
           <Tag size={32} className="mx-auto text-gray-200 mb-2" />
           <p className="text-sm text-gray-400">No tags yet — create your first tag above</p>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6">
           <div className="flex flex-wrap gap-3">
             {tags.map(tag => (
               <div key={tag.id} className="group flex items-center gap-2 pl-3 pr-2 py-2 rounded-xl border border-gray-200 hover:border-gray-300 transition-all">

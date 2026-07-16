@@ -70,7 +70,7 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col bg-white border-r border-gray-200 transition-all duration-200",
+        "flex flex-col bg-surface border-r border-gray-200 transition-all duration-200",
         collapsed ? "w-16" : "w-60"
       )}
     >
@@ -111,7 +111,7 @@ export default function Sidebar() {
                   className={cn(
                     "flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition-colors",
                     active
-                      ? "bg-blue-50 text-blue-700 font-medium"
+                      ? "bg-brand-50 text-brand-700 font-medium"
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >

@@ -11,7 +11,7 @@ interface Banner {
   btnText: string;
 }
 
-const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500";
 
 export default function BannersPage() {
   const [banners,   setBanners]   = useState<Banner[]>([]);
@@ -71,14 +71,14 @@ export default function BannersPage() {
           <p className="text-sm text-gray-500 mt-0.5">{banners.length} banners configured</p>
         </div>
         <button onClick={openCreate}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors">
+          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors">
           <Plus size={15} /> Add Banner
         </button>
       </div>
 
       {/* Form */}
       {showForm && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-5 space-y-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 mb-5 space-y-4">
           <h2 className="font-semibold text-gray-900">{editing ? "Edit Banner" : "New Banner"}</h2>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Banner Image URL *</label>
@@ -104,7 +104,7 @@ export default function BannersPage() {
           </div>
           <div className="flex items-center gap-3 pt-2">
             <button onClick={handleSave} disabled={saving}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50">
+              className="inline-flex items-center gap-2 px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50">
               <Check size={14} /> {saving ? "Saving..." : "Save Banner"}
             </button>
             <button onClick={() => setShowForm(false)}
@@ -119,14 +119,14 @@ export default function BannersPage() {
       {loading ? (
         <div className="py-16 text-center text-gray-400">Loading...</div>
       ) : banners.length === 0 ? (
-        <div className="py-16 text-center bg-white border border-gray-200 rounded-2xl">
+        <div className="py-16 text-center bg-surface border border-gray-200 rounded-2xl">
           <Image size={32} className="mx-auto text-gray-200 mb-2" />
           <p className="text-sm text-gray-400">No banners yet — click Add Banner to create one</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {banners.map((b) => (
-            <div key={b.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+            <div key={b.id} className="bg-surface border border-gray-200 rounded-2xl overflow-hidden">
               {/* Preview */}
               <div className="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
                 {b.bannerImg ? (
@@ -139,7 +139,7 @@ export default function BannersPage() {
                 <div className="absolute inset-0 bg-black/30 flex flex-col justify-end p-4">
                   <p className="text-white font-bold text-lg leading-tight">{b.title}</p>
                   <p className="text-white/80 text-xs mt-0.5 line-clamp-1">{b.description}</p>
-                  <span className="mt-2 inline-block bg-white text-gray-900 text-xs font-semibold px-3 py-1 rounded-lg self-start">
+                  <span className="mt-2 inline-block bg-surface text-gray-900 text-xs font-semibold px-3 py-1 rounded-lg self-start">
                     {b.btnText}
                   </span>
                 </div>
@@ -149,7 +149,7 @@ export default function BannersPage() {
                 <p className="text-xs text-gray-400 truncate max-w-[200px] font-mono">{b.bannerImg}</p>
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button onClick={() => openEdit(b)}
-                    className="p-1.5 hover:bg-blue-50 rounded-lg text-gray-400 hover:text-blue-600 transition-colors">
+                    className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                     <Pencil size={14} />
                   </button>
                   <button onClick={() => handleDelete(b.id)} disabled={deleting === b.id}

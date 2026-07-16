@@ -1,29 +1,68 @@
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Enable class-based dark mode: <html class="dark">, toggled by ThemeToggle. */
+@custom-variant dark (&:where(.dark, .dark *));
 
+/* Mona Sans — same typeface as the Plattera storefront (loaded in layout.tsx). */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-mona);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* ── Plattera brand palette (matches the storefront) ──────────────
+     brand-600 (#295A4F) is THE brand green. The scale exists so the
+     admin UI can use blue-style shades (50/100/600/700…) directly.   */
+  --color-brand-50: #f0f6f4;
+  --color-brand-100: #dbe9e5;
+  --color-brand-200: #b9d3cc;
+  --color-brand-300: #8fb8ad;
+  --color-brand-400: #5f9788;
+  --color-brand-500: #3d7a6b;
+  --color-brand-600: #295a4f;
+  --color-brand-700: #204a41;
+  --color-brand-800: #1a3b34;
+  --color-brand-900: #16302b;
+
+  /* Card / panel background. Use `bg-surface` instead of `bg-white` so it
+     can flip in dark mode — while `text-white` stays truly white on the
+     green buttons. */
+  --color-surface: #ffffff;
+}
+
+/*
+  Dark mode without rewriting every component.
+
+  Tailwind v4 compiles utilities to `var(--color-*)`, so redefining those
+  variables under `.dark` flips existing classes through the CSS cascade:
+  `text-gray-900` becomes near-white, `bg-gray-50` becomes a dark surface,
+  `border-gray-200` becomes a dark border — no per-file `dark:` variants.
+
+  Note: --color-white is deliberately NOT remapped, so `text-white` on the
+  brand buttons stays readable.
+*/
+.dark {
+  --color-surface: #171c1f;
+
+  --color-gray-50: #1b2124;
+  --color-gray-100: #232a2e;
+  --color-gray-200: #2d353a;
+  --color-gray-300: #3a444a;
+  --color-gray-400: #6b7780;
+  --color-gray-500: #8d99a3;
+  --color-gray-600: #aab4bd;
+  --color-gray-700: #c5cdd4;
+  --color-gray-800: #e0e5e9;
+  --color-gray-900: #f2f5f7;
+
+  /* Lift the brand tints so they read on dark surfaces. */
+  --color-brand-50: #16302b;
+  --color-brand-100: #1a3b34;
+
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-gray-50);
+  color: var(--color-gray-900);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }

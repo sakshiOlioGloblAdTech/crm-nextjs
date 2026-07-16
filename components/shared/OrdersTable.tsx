@@ -63,7 +63,7 @@ export default function OrdersTable({ type }: Props) {
   }, [fetch_]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-surface rounded-xl border border-gray-200 overflow-hidden">
       {/* Filters */}
       <div className="p-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-xs">
@@ -73,7 +73,7 @@ export default function OrdersTable({ type }: Props) {
             placeholder="Search order #, name, email..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -81,7 +81,7 @@ export default function OrdersTable({ type }: Props) {
           <select
             value={status}
             onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-            className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
           >
             {STATUS_OPTIONS.filter((s) =>
               type === "current"
@@ -115,7 +115,7 @@ export default function OrdersTable({ type }: Props) {
           )}
           {orders.map((o) => (
             <tr key={o.id} className="hover:bg-gray-50 transition-colors">
-              <td className="px-4 py-3 font-mono text-xs text-blue-600 font-medium">
+              <td className="px-4 py-3 font-mono text-xs text-brand-600 font-medium">
                 {o.orderNumber}
               </td>
               <td className="px-4 py-3">
@@ -136,7 +136,7 @@ export default function OrdersTable({ type }: Props) {
                 <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
                   o.paymentMode === "COD"
                     ? "bg-orange-100 text-orange-800"
-                    : "bg-blue-100 text-blue-800"
+                    : "bg-brand-100 text-brand-800"
                 }`}>
                   {o.paymentMode ?? "—"}
                 </span>
@@ -152,7 +152,7 @@ export default function OrdersTable({ type }: Props) {
               <td className="px-4 py-3">
                 <Link
                   href={`/orders/${o.id}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
                 >
                   <Eye size={13} /> View
                 </Link>

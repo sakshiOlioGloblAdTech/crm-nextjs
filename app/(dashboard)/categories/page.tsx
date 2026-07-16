@@ -55,7 +55,7 @@ export default function CategoriesPage() {
         </div>
         <Link
           href="/categories/new"
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition-colors"
         >
           <Plus size={16} />
           New Category
@@ -63,7 +63,7 @@ export default function CategoriesPage() {
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-surface rounded-xl border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-100">
           <div className="relative max-w-xs">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -72,7 +72,7 @@ export default function CategoriesPage() {
               placeholder="Search categories..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
         </div>
@@ -109,7 +109,7 @@ export default function CategoriesPage() {
                   ) : <span className="text-gray-300">—</span>}
                 </td>
                 <td className="px-4 py-3">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-brand-50 text-brand-700">
                     {cat._count.subCategories} subcategories
                   </span>
                 </td>
@@ -126,7 +126,7 @@ export default function CategoriesPage() {
                 <td className="px-4 py-3 text-gray-500">{formatDate(cat.createdAt)}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2 justify-end">
-                    <Link href={`/categories/${cat.id}/edit`} className="p-1.5 hover:bg-blue-50 rounded-lg text-gray-400 hover:text-blue-600 transition-colors">
+                    <Link href={`/categories/${cat.id}/edit`} className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                       <Pencil size={14} />
                     </Link>
                     <button

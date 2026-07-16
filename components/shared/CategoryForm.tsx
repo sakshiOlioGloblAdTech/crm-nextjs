@@ -108,7 +108,7 @@ export default function CategoryForm({ initial = {}, mode }: CategoryFormProps) 
         {error && <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-xl border border-red-200">{error}</div>}
 
         {/* Basic Info */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-surface rounded-2xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-semibold text-gray-900 text-sm">Basic Information</h2>
 
           <div>
@@ -157,18 +157,18 @@ export default function CategoryForm({ initial = {}, mode }: CategoryFormProps) 
 
           <div className="flex items-center gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="isFeatured" checked={form.isFeatured} onChange={handleChange} className="w-4 h-4 accent-blue-600" />
+              <input type="checkbox" name="isFeatured" checked={form.isFeatured} onChange={handleChange} className="w-4 h-4 accent-brand-600" />
               <span className="text-sm text-gray-700">Featured</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="status" checked={form.status} onChange={handleChange} className="w-4 h-4 accent-blue-600" />
+              <input type="checkbox" name="status" checked={form.status} onChange={handleChange} className="w-4 h-4 accent-brand-600" />
               <span className="text-sm text-gray-700">Active</span>
             </label>
           </div>
         </div>
 
         {/* SEO */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-surface rounded-2xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-semibold text-gray-900 text-sm">SEO</h2>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Meta Title</label>
@@ -188,7 +188,7 @@ export default function CategoryForm({ initial = {}, mode }: CategoryFormProps) 
         </div>
 
         <button type="submit" disabled={loading}
-          className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
+          className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
           <Save size={16} />
           {loading ? "Saving..." : mode === "edit" ? "Update Category" : "Create Category"}
         </button>

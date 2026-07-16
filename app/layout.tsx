@@ -1,19 +1,41 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Mona_Sans } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 
-const inter = Inter({ subsets: ["latin"] });
+// Same typeface as the Plattera storefront.
+const monaSans = Mona_Sans({
+  variable: "--font-mona",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
 
 export const metadata: Metadata = {
-  title: "CRM Admin",
-  description: "E-commerce CRM Admin Panel",
+  title: "Plattera CRM",
+  description: "Plattera e-commerce CRM admin panel",
 };
+
+/**
+ * Applied before paint so the saved theme doesn't flash light-then-dark.
+ * Falls back to the OS preference when nothing is saved.
+ */
+const themeScript = `
+(function(){try{
+  var t = localStorage.getItem('crm-theme');
+  var dark = t ? t === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (dark) document.documentElement.classList.add('dark');
+}catch(e){}})();
+`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+    // suppressHydrationWarning: the script above adds `dark` to <html> before
+    // React hydrates, which would otherwise look like a mismatch.
+    <html lang="en" className={monaSans.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="antialiased">
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

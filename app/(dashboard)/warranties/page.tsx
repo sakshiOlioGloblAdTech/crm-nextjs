@@ -45,13 +45,13 @@ export default function WarrantiesPage() {
         <p className="text-sm text-gray-500 mt-0.5">{total} total warranty submissions</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <div className="bg-surface rounded-2xl border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-100 flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-[200px] max-w-xs">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input type="text" placeholder="Name, email, order #..."
               value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
           </div>
           <div className="flex items-center gap-2">
             <Filter size={14} className="text-gray-400" />
@@ -107,7 +107,7 @@ export default function WarrantiesPage() {
                 <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(c.createdAt)}</td>
                 <td className="px-4 py-3">
                   <Link href={`/warranties/${c.id}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50 rounded-lg transition-colors">
                     <Eye size={12} /> View
                   </Link>
                 </td>

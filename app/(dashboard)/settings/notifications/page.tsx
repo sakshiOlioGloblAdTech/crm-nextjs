@@ -31,7 +31,7 @@ const VARIABLES_HELP = [
 ];
 
 const INPUT =
-  "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500";
 
 export default function NotificationsPage() {
   const [templates, setTemplates] = useState<Record<string, any>>({});
@@ -98,7 +98,7 @@ export default function NotificationsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Event list */}
-        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+        <div className="bg-surface border border-gray-200 rounded-2xl overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-100">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Events</p>
           </div>
@@ -107,10 +107,10 @@ export default function NotificationsPage() {
               const hasTemplate = !!templates[e.event];
               return (
                 <button key={e.event} onClick={() => selectEvent(e.event)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${activeEvent === e.event ? "bg-blue-50" : "hover:bg-gray-50"}`}>
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${activeEvent === e.event ? "bg-brand-50" : "hover:bg-gray-50"}`}>
                   <span className="text-lg shrink-0">{e.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-semibold ${activeEvent === e.event ? "text-blue-700" : "text-gray-900"}`}>{e.label}</p>
+                    <p className={`text-sm font-semibold ${activeEvent === e.event ? "text-brand-700" : "text-gray-900"}`}>{e.label}</p>
                     {hasTemplate && <p className="text-xs text-emerald-500 font-medium">Configured</p>}
                     {!hasTemplate && <p className="text-xs text-gray-500">Not configured</p>}
                   </div>
@@ -128,7 +128,7 @@ export default function NotificationsPage() {
             </div>
           )}
 
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-xl">{activeEventDef.icon}</span>
@@ -138,7 +138,7 @@ export default function NotificationsPage() {
                 </div>
               </div>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.isActive} onChange={e => setForm({ ...form, isActive: e.target.checked })} className="w-4 h-4 accent-blue-600" />
+                <input type="checkbox" checked={form.isActive} onChange={e => setForm({ ...form, isActive: e.target.checked })} className="w-4 h-4 accent-brand-600" />
                 <span className="text-sm font-medium text-gray-700">Active</span>
               </label>
             </div>
@@ -162,19 +162,19 @@ export default function NotificationsPage() {
             </div>
 
             <button onClick={handleSave} disabled={saving || !form.subject || !form.emailBody}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50">
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50">
               {saving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Save size={15} />}
               {saving ? "Saving..." : "Save Template"}
             </button>
           </div>
 
           {/* Variables help */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-5">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Available Variables</p>
             <div className="grid grid-cols-2 gap-2">
               {VARIABLES_HELP.map(v => (
                 <div key={v.var} className="flex items-center gap-2">
-                  <code className="text-xs bg-gray-100 text-blue-700 px-2 py-0.5 rounded font-mono">{v.var}</code>
+                  <code className="text-xs bg-gray-100 text-brand-700 px-2 py-0.5 rounded font-mono">{v.var}</code>
                   <span className="text-xs text-gray-500">{v.desc}</span>
                 </div>
               ))}

@@ -6,9 +6,9 @@ import { Plus, Pencil, Trash2, Save, X, Percent } from "lucide-react";
 interface TaxRule { id: number; name: string; rate: number; type: string; categoryId: number | null; category: { name: string } | null; description: string | null; isDefault: boolean; status: boolean; }
 interface Category { id: number; name: string; }
 
-const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500";
 const LABEL = "block text-sm font-semibold text-gray-700 mb-1.5";
-const TYPE_COLORS: Record<string, string> = { GLOBAL: "bg-blue-100 text-blue-800", CATEGORY: "bg-purple-100 text-purple-800", PRODUCT: "bg-orange-100 text-orange-800" };
+const TYPE_COLORS: Record<string, string> = { GLOBAL: "bg-brand-100 text-brand-800", CATEGORY: "bg-purple-100 text-purple-800", PRODUCT: "bg-orange-100 text-orange-800" };
 
 export default function TaxRulesPage() {
   const [rules,      setRules]      = useState<TaxRule[]>([]);
@@ -59,13 +59,13 @@ export default function TaxRulesPage() {
           <h1 className="text-xl font-bold text-gray-900">Tax Rules</h1>
           <p className="text-sm text-gray-400 mt-0.5">Configure tax rates by type or category</p>
         </div>
-        <button onClick={openCreate} className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl">
+        <button onClick={openCreate} className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl">
           <Plus size={15} /> Add Tax Rule
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-5 space-y-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 mb-5 space-y-4">
           <h2 className="font-semibold text-gray-900">{editing ? "Edit Tax Rule" : "New Tax Rule"}</h2>
           <div className="grid grid-cols-2 gap-4">
             <div><label className={LABEL}>Rule Name *</label><input value={form.name} onChange={e => setForm({...form, name: e.target.value})} className={INPUT} placeholder="e.g. Standard GST 18%" /></div>
@@ -92,17 +92,17 @@ export default function TaxRulesPage() {
           </div>
           <div><label className={LABEL}>Description</label><input value={form.description} onChange={e => setForm({...form, description: e.target.value})} className={INPUT} placeholder="Optional description" /></div>
           <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={form.isDefault} onChange={e => setForm({...form, isDefault: e.target.checked})} className="w-4 h-4 accent-blue-600" /><span className="text-sm text-gray-700">Set as Default</span></label>
-            <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={form.status} onChange={e => setForm({...form, status: e.target.checked})} className="w-4 h-4 accent-blue-600" /><span className="text-sm text-gray-700">Active</span></label>
+            <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={form.isDefault} onChange={e => setForm({...form, isDefault: e.target.checked})} className="w-4 h-4 accent-brand-600" /><span className="text-sm text-gray-700">Set as Default</span></label>
+            <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={form.status} onChange={e => setForm({...form, status: e.target.checked})} className="w-4 h-4 accent-brand-600" /><span className="text-sm text-gray-700">Active</span></label>
           </div>
           <div className="flex gap-3 pt-2">
-            <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50"><Save size={14} />{saving ? "Saving..." : "Save"}</button>
+            <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50"><Save size={14} />{saving ? "Saving..." : "Save"}</button>
             <button onClick={() => setShowForm(false)} className="inline-flex items-center gap-2 px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-semibold rounded-xl"><X size={14} />Cancel</button>
           </div>
         </div>
       )}
 
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+      <div className="bg-surface border border-gray-200 rounded-2xl overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr>{["Rule Name", "Rate", "Type", "Category", "Default", "Status", ""].map(h => <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>)}</tr>
@@ -120,7 +120,7 @@ export default function TaxRulesPage() {
                 <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${r.status ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"}`}>{r.status ? "Active" : "Inactive"}</span></td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1.5 justify-end">
-                    <button onClick={() => openEdit(r)} className="p-1.5 hover:bg-blue-50 rounded-lg text-gray-400 hover:text-blue-600"><Pencil size={14} /></button>
+                    <button onClick={() => openEdit(r)} className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600"><Pencil size={14} /></button>
                     <button onClick={() => handleDelete(r.id)} disabled={deleting === r.id} className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-600 disabled:opacity-50"><Trash2 size={14} /></button>
                   </div>
                 </td>

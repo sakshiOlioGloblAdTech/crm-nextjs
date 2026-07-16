@@ -181,7 +181,7 @@ export default function ProductForm({ initial = {}, mode }: Props) {
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <Link href="/products" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-400">
+        <Link href="/products" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-surface hover:bg-gray-50 text-gray-400">
           <ArrowLeft size={18} />
         </Link>
         <div>
@@ -198,7 +198,7 @@ export default function ProductForm({ initial = {}, mode }: Props) {
         )}
 
         {/* Basic Info */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-surface rounded-2xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-semibold text-gray-900 text-sm">Basic Information</h2>
 
           <div className="grid grid-cols-2 gap-4">
@@ -270,7 +270,7 @@ export default function ProductForm({ initial = {}, mode }: Props) {
             ].map((f) => (
               <label key={f.name} className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name={f.name} checked={(form as any)[f.name]}
-                  onChange={handleChange} className="w-4 h-4 accent-blue-600" />
+                  onChange={handleChange} className="w-4 h-4 accent-brand-600" />
                 <span className="text-sm text-gray-700">{f.label}</span>
               </label>
             ))}
@@ -278,7 +278,7 @@ export default function ProductForm({ initial = {}, mode }: Props) {
         </div>
 
         {/* Personalization */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-surface rounded-2xl border border-gray-200 p-6 space-y-4">
           <div>
             <h2 className="font-semibold text-gray-900 text-sm">Personalization</h2>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -293,7 +293,7 @@ export default function ProductForm({ initial = {}, mode }: Props) {
               name="personalizationEnabled"
               checked={form.personalizationEnabled}
               onChange={handleChange}
-              className="w-4 h-4 accent-blue-600"
+              className="w-4 h-4 accent-brand-600"
             />
             <span className="text-sm text-gray-700">
               Allow personalization for this product
@@ -324,11 +324,11 @@ export default function ProductForm({ initial = {}, mode }: Props) {
         </div>
 
         {/* Variations */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-surface rounded-2xl border border-gray-200 p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-gray-900 text-sm">Variations / SKUs</h2>
             <button type="button" onClick={addVariation}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-brand-600 hover:bg-brand-50 rounded-lg transition-colors">
               <Plus size={14} /> Add Variation
             </button>
           </div>
@@ -419,7 +419,7 @@ export default function ProductForm({ initial = {}, mode }: Props) {
         </div>
 
         {/* SEO */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <div className="bg-surface rounded-2xl border border-gray-200 p-6 space-y-4">
           <h2 className="font-semibold text-gray-900 text-sm">SEO</h2>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Meta Title</label>
@@ -436,7 +436,7 @@ export default function ProductForm({ initial = {}, mode }: Props) {
         </div>
 
         <button type="submit" disabled={loading}
-          className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
+          className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors">
           <Save size={16} />
           {loading ? "Saving..." : mode === "edit" ? "Update Product" : "Create Product"}
         </button>

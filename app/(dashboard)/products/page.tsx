@@ -66,18 +66,18 @@ export default function ProductsPage() {
           <p className="text-sm text-gray-500 mt-0.5">{data?.total ?? 0} total products</p>
         </div>
         <Link href="/products/new"
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+          className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition-colors">
           <Plus size={16} /> New Product
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-surface rounded-xl border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-100">
           <div className="relative max-w-xs">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input type="text" placeholder="Search products..." value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500" />
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export default function ProductsPage() {
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
                       {p.isFeatured && <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded text-xs">Featured</span>}
-                      {p.isNew && <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">New</span>}
+                      {p.isNew && <span className="px-1.5 py-0.5 bg-brand-100 text-brand-700 rounded text-xs">New</span>}
                       {p.isBestSeller && <span className="px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded text-xs">Bestseller</span>}
                     </div>
                   </td>
@@ -140,7 +140,7 @@ export default function ProductsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2 justify-end">
-                      <Link href={`/products/${p.id}/edit`} className="p-1.5 hover:bg-blue-50 rounded-lg text-gray-400 hover:text-blue-600 transition-colors">
+                      <Link href={`/products/${p.id}/edit`} className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                         <Pencil size={14} />
                       </Link>
                       <button onClick={() => handleDelete(p.id, p.productName)} disabled={deleting === p.id}

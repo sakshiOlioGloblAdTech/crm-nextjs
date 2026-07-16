@@ -33,22 +33,22 @@ const NEXT_STATUSES: Record<string, {
   cls: string; icon: any;
 }[]> = {
   PAYMENT_PENDING: [
-    { value: "PLACED",    label: "Confirm Order",   icon: CheckCircle2, cls: "bg-blue-600 hover:bg-blue-700 text-white" },
-    { value: "CANCELLED", label: "Cancel Order",    icon: XCircle,      cls: "bg-white border border-red-200 text-red-600 hover:bg-red-50" },
+    { value: "PLACED",    label: "Confirm Order",   icon: CheckCircle2, cls: "bg-brand-600 hover:bg-brand-700 text-white" },
+    { value: "CANCELLED", label: "Cancel Order",    icon: XCircle,      cls: "bg-surface border border-red-200 text-red-600 hover:bg-red-50" },
   ],
   PLACED: [
     { value: "PROCESSING", label: "Start Processing", icon: RefreshCw,    cls: "bg-amber-500 hover:bg-amber-600 text-white" },
-    { value: "CANCELLED",  label: "Cancel Order",     icon: XCircle,      cls: "bg-white border border-red-200 text-red-600 hover:bg-red-50" },
+    { value: "CANCELLED",  label: "Cancel Order",     icon: XCircle,      cls: "bg-surface border border-red-200 text-red-600 hover:bg-red-50" },
   ],
   PROCESSING: [
     { value: "SHIPPED",   label: "Mark as Shipped",   icon: Truck,        cls: "bg-emerald-600 hover:bg-emerald-700 text-white" },
-    { value: "CANCELLED", label: "Cancel Order",      icon: XCircle,      cls: "bg-white border border-red-200 text-red-600 hover:bg-red-50" },
+    { value: "CANCELLED", label: "Cancel Order",      icon: XCircle,      cls: "bg-surface border border-red-200 text-red-600 hover:bg-red-50" },
   ],
   SHIPPED: [
     { value: "DELIVERED", label: "Mark as Delivered", icon: CheckCircle2, cls: "bg-emerald-600 hover:bg-emerald-700 text-white" },
   ],
   DELIVERED: [
-    { value: "COMPLETED", label: "Mark as Completed", icon: CheckCircle2, cls: "bg-blue-600 hover:bg-blue-700 text-white" },
+    { value: "COMPLETED", label: "Mark as Completed", icon: CheckCircle2, cls: "bg-brand-600 hover:bg-brand-700 text-white" },
     { value: "REFUNDED",  label: "Refund Order",      icon: RefreshCw,    cls: "bg-purple-600 hover:bg-purple-700 text-white" },
   ],
   COMPLETED: [
@@ -100,7 +100,7 @@ export default function OrderDetailPage() {
   // ── Loading ──
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-72 gap-3">
-      <div className="w-9 h-9 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-9 h-9 border-[3px] border-brand-600 border-t-transparent rounded-full animate-spin" />
       <p className="text-sm text-gray-400">Loading order details...</p>
     </div>
   );
@@ -108,7 +108,7 @@ export default function OrderDetailPage() {
   if (!order || order.error) return (
     <div className="flex flex-col items-center justify-center h-72 gap-3">
       <p className="text-gray-500 font-medium">Order not found</p>
-      <Link href="/orders" className="text-sm text-blue-600 hover:underline">← Back to orders</Link>
+      <Link href="/orders" className="text-sm text-brand-600 hover:underline">← Back to orders</Link>
     </div>
   );
 
@@ -124,13 +124,13 @@ export default function OrderDetailPage() {
       {/* ════ HEADER ════ */}
       <div className="flex items-start gap-3">
         <Link href="/orders"
-          className="mt-1 p-2 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 text-gray-400 transition-all">
+          className="mt-1 p-2 rounded-xl hover:bg-surface hover:shadow-sm border border-transparent hover:border-gray-200 text-gray-400 transition-all">
           <ArrowLeft size={17} />
         </Link>
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
             <h1 className="text-2xl font-bold text-gray-900">
-              Order <span className="text-blue-600 font-mono">#{order.orderNumber}</span>
+              Order <span className="text-brand-600 font-mono">#{order.orderNumber}</span>
             </h1>
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${ORDER_STATUS_COLORS[order.orderStatus as OrderStatus]}`}>
               {StatusIcon && <StatusIcon size={11} />}
@@ -159,7 +159,7 @@ export default function OrderDetailPage() {
 
       {/* ════ STATUS ACTION BAR ════ */}
       {nextActions.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-5">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-5">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
             Update Order Status
           </p>
@@ -187,7 +187,7 @@ export default function OrderDetailPage() {
 
       {/* ════ ORDER PROGRESS TIMELINE ════ */}
       {!isCancelled && !isRefunded && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-6">
             Order Progress
           </p>
@@ -202,14 +202,14 @@ export default function OrderDetailPage() {
                   {/* Step */}
                   <div className="flex flex-col items-center gap-2 min-w-[60px]">
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shrink-0 ${
-                      current ? "bg-blue-600 text-white ring-4 ring-blue-100"
+                      current ? "bg-brand-600 text-white ring-4 ring-brand-100"
                       : done   ? "bg-emerald-500 text-white"
                       : "bg-gray-100 text-gray-300"
                     }`}>
                       <Icon size={16} />
                     </div>
                     <span className={`text-xs font-medium text-center leading-tight ${
-                      current ? "text-blue-600"
+                      current ? "text-brand-600"
                       : done   ? "text-emerald-600"
                       : "text-gray-300"
                     }`}>
@@ -254,7 +254,7 @@ export default function OrderDetailPage() {
         <div className="lg:col-span-2 space-y-5">
 
           {/* Order Items */}
-          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <div className="bg-surface border border-gray-200 rounded-2xl overflow-hidden">
             <div className="flex items-center gap-2.5 px-6 py-4 border-b border-gray-100">
               <div className="w-7 h-7 bg-gray-100 rounded-lg flex items-center justify-center">
                 <Package size={14} className="text-gray-500" />
@@ -309,7 +309,7 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Price Breakdown */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-6">
             <h2 className="font-semibold text-gray-900 text-sm mb-5">Price Breakdown</h2>
             <div className="space-y-3">
               {[
@@ -349,10 +349,10 @@ export default function OrderDetailPage() {
         <div className="space-y-4">
 
           {/* Customer */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-5">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center">
-                <User size={15} className="text-blue-600" />
+              <div className="w-8 h-8 bg-brand-50 rounded-xl flex items-center justify-center">
+                <User size={15} className="text-brand-600" />
               </div>
               <h2 className="font-semibold text-gray-900 text-sm">Customer</h2>
             </div>
@@ -370,7 +370,7 @@ export default function OrderDetailPage() {
               </div>
               {order.customer && (
                 <Link href={`/customers/${order.customer.id}`}
-                  className="inline-flex items-center gap-1 text-blue-600 text-xs font-semibold mt-2 hover:underline">
+                  className="inline-flex items-center gap-1 text-brand-600 text-xs font-semibold mt-2 hover:underline">
                   View full profile <ChevronRight size={12} />
                 </Link>
               )}
@@ -378,7 +378,7 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Delivery Address */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-5">
             <div className="flex items-center gap-2.5 mb-4">
               <div className="w-8 h-8 bg-emerald-50 rounded-xl flex items-center justify-center">
                 <MapPin size={15} className="text-emerald-600" />
@@ -395,7 +395,7 @@ export default function OrderDetailPage() {
                   {order.pincode}
                 </span>
                 {order.addressType && (
-                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-xs capitalize font-medium">
+                  <span className="px-2 py-0.5 bg-brand-50 text-brand-600 rounded-md text-xs capitalize font-medium">
                     {order.addressType}
                   </span>
                 )}
@@ -404,7 +404,7 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Payment */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-5">
             <div className="flex items-center gap-2.5 mb-4">
               <div className="w-8 h-8 bg-purple-50 rounded-xl flex items-center justify-center">
                 <CreditCard size={15} className="text-purple-600" />
@@ -417,7 +417,7 @@ export default function OrderDetailPage() {
                 <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
                   order.paymentMode === "COD"
                     ? "bg-orange-100 text-orange-700"
-                    : "bg-blue-100 text-blue-700"
+                    : "bg-brand-100 text-brand-700"
                 }`}>
                   {order.paymentMode ?? "—"}
                 </span>
@@ -458,7 +458,7 @@ export default function OrderDetailPage() {
       {/* ════ CANCEL MODAL ════ */}
       {showCancel && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-gray-100">
+          <div className="bg-surface rounded-2xl p-6 w-full max-w-md shadow-2xl border border-gray-100">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-11 h-11 bg-red-100 rounded-2xl flex items-center justify-center shrink-0">
                 <XCircle size={22} className="text-red-600" />

@@ -59,7 +59,7 @@ export default function NewUserPage() {
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/users" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-400">
+        <Link href="/users" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-surface hover:bg-gray-50 text-gray-400">
           <ArrowLeft size={16} />
         </Link>
         <div>
@@ -71,7 +71,7 @@ export default function NewUserPage() {
       <form onSubmit={handleSubmit} className="max-w-md space-y-5" noValidate>
         {error && <div className="px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl">{error}</div>}
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 space-y-4">
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Full Name <span className="text-red-500">*</span></label>
@@ -115,7 +115,7 @@ export default function NewUserPage() {
         </div>
 
         <button type="submit" disabled={loading}
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50">
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50">
           <Save size={15} />
           {loading ? "Creating..." : "Create User"}
         </button>

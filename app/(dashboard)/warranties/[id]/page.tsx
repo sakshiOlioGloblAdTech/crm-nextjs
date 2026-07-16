@@ -41,7 +41,7 @@ export default function WarrantyDetailPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-7 h-7 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -69,7 +69,7 @@ export default function WarrantyDetailPage() {
 
       {/* Actions */}
       {claim.status === "PENDING" && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-4 flex items-center gap-3">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-4 mb-4 flex items-center gap-3">
           <div className="flex items-center gap-2 mr-2">
             <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
             <span className="text-sm font-medium text-gray-700">Pending Review</span>
@@ -80,7 +80,7 @@ export default function WarrantyDetailPage() {
             <CheckCircle2 size={14} /> Approve
           </button>
           <button onClick={() => updateStatus("REJECTED")} disabled={updating}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-xl transition-all disabled:opacity-50">
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-surface hover:bg-red-50 text-red-600 border border-red-200 rounded-xl transition-all disabled:opacity-50">
             <XCircle size={14} /> Reject
           </button>
         </div>
@@ -88,10 +88,10 @@ export default function WarrantyDetailPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Claimant */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
-              <Shield size={13} className="text-blue-600" />
+            <div className="w-7 h-7 bg-brand-50 rounded-lg flex items-center justify-center">
+              <Shield size={13} className="text-brand-600" />
             </div>
             <h2 className="text-sm font-semibold text-gray-900">Claimant Details</h2>
           </div>
@@ -112,7 +112,7 @@ export default function WarrantyDetailPage() {
         </div>
 
         {/* Product */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-4">
           <h2 className="text-sm font-semibold text-gray-900 mb-3">Product Details</h2>
           <div className="space-y-2 text-sm">
             {[
@@ -131,7 +131,7 @@ export default function WarrantyDetailPage() {
         </div>
 
         {/* Order Info */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-4">
           <h2 className="text-sm font-semibold text-gray-900 mb-3">Order Reference</h2>
           <div className="space-y-2 text-sm">
             {[
@@ -140,7 +140,7 @@ export default function WarrantyDetailPage() {
             ].map(([label, value]) => value ? (
               <div key={label} className="flex justify-between">
                 <span className="text-gray-400 text-xs">{label}</span>
-                <span className="font-mono text-xs text-blue-600">{value}</span>
+                <span className="font-mono text-xs text-brand-600">{value}</span>
               </div>
             ) : null)}
             {!claim.orderNumber && <p className="text-xs text-gray-400">No order reference provided</p>}
@@ -149,7 +149,7 @@ export default function WarrantyDetailPage() {
 
         {/* Comments */}
         {claim.comments && (
-          <div className="bg-white border border-gray-200 rounded-2xl p-4">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-4">
             <h2 className="text-sm font-semibold text-gray-900 mb-2">Comments</h2>
             <p className="text-sm text-gray-600 leading-relaxed">{claim.comments}</p>
           </div>

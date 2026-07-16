@@ -15,7 +15,7 @@ interface AdminUser {
 
 const ROLE_STYLES: Record<string, string> = {
   SUPER_ADMIN: "bg-purple-100 text-purple-800",
-  ADMIN:       "bg-blue-100 text-blue-800",
+  ADMIN:       "bg-brand-100 text-brand-800",
   STAFF:       "bg-gray-100 text-gray-600",
 };
 
@@ -50,7 +50,7 @@ export default function UsersPage() {
           <p className="text-sm text-gray-500 mt-0.5">{users.length} team members</p>
         </div>
         <Link href="/users/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors">
+          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors">
           <Plus size={15} /> Add User
         </Link>
       </div>
@@ -65,7 +65,7 @@ export default function UsersPage() {
         ))}
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+      <div className="bg-surface border border-gray-200 rounded-2xl overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr>
@@ -88,8 +88,8 @@ export default function UsersPage() {
               <tr key={u.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-                      <span className="text-xs font-bold text-blue-600">
+                    <div className="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-xs font-bold text-brand-600">
                         {u.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                       </span>
                     </div>

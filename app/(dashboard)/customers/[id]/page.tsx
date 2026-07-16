@@ -42,7 +42,7 @@ export default function CustomerDetailPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
@@ -58,7 +58,7 @@ export default function CustomerDetailPage() {
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link href="/customers"
-          className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-400 transition-colors">
+          className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-surface hover:bg-gray-50 text-gray-400 transition-colors">
           <ArrowLeft size={16} />
         </Link>
         <div className="flex-1">
@@ -79,7 +79,7 @@ export default function CustomerDetailPage() {
           disabled={toggling}
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all disabled:opacity-50 ${
             customer.status
-              ? "bg-white border border-red-200 text-red-600 hover:bg-red-50"
+              ? "bg-surface border border-red-200 text-red-600 hover:bg-red-50"
               : "bg-emerald-600 hover:bg-emerald-700 text-white"
           }`}
         >
@@ -97,11 +97,11 @@ export default function CustomerDetailPage() {
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Total Orders",   value: customer._count.orders,                  color: "text-blue-600",   bg: "bg-blue-50"   },
+          { label: "Total Orders",   value: customer._count.orders,                  color: "text-brand-600",   bg: "bg-brand-50"   },
           { label: "Total Spent",    value: formatINR(totalSpent),                   color: "text-emerald-600",bg: "bg-emerald-50"},
           { label: "Returns",        value: customer._count.returnOrders,            color: "text-orange-600", bg: "bg-orange-50" },
         ].map((s) => (
-          <div key={s.label} className="bg-white border border-gray-200 rounded-2xl p-4">
+          <div key={s.label} className="bg-surface border border-gray-200 rounded-2xl p-4">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{s.label}</p>
             <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
           </div>
@@ -114,10 +114,10 @@ export default function CustomerDetailPage() {
         <div className="lg:col-span-2 space-y-5">
 
           {/* Orders */}
-          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <div className="bg-surface border border-gray-200 rounded-2xl overflow-hidden">
             <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100">
-              <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
-                <ShoppingBag size={13} className="text-blue-600" />
+              <div className="w-7 h-7 bg-brand-50 rounded-lg flex items-center justify-center">
+                <ShoppingBag size={13} className="text-brand-600" />
               </div>
               <h2 className="font-semibold text-gray-900 text-sm">
                 Order History
@@ -140,7 +140,7 @@ export default function CustomerDetailPage() {
                 <tbody className="divide-y divide-gray-50">
                   {customer.orders.map((o: any) => (
                     <tr key={o.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 font-mono text-xs text-blue-600 font-semibold">{o.orderNumber}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-brand-600 font-semibold">{o.orderNumber}</td>
                       <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(o.orderDate)}</td>
                       <td className="px-4 py-3 font-semibold text-gray-900">{formatINR(o.grandtotal)}</td>
                       <td className="px-4 py-3">
@@ -150,14 +150,14 @@ export default function CustomerDetailPage() {
                       </td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${
-                          o.paymentMode === "COD" ? "bg-orange-100 text-orange-700" : "bg-blue-100 text-blue-700"
+                          o.paymentMode === "COD" ? "bg-orange-100 text-orange-700" : "bg-brand-100 text-brand-700"
                         }`}>
                           {o.paymentMode ?? "—"}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         <Link href={`/orders/${o.id}`}
-                          className="text-xs text-blue-600 hover:underline font-semibold">
+                          className="text-xs text-brand-600 hover:underline font-semibold">
                           View
                         </Link>
                       </td>
@@ -170,7 +170,7 @@ export default function CustomerDetailPage() {
 
           {/* Returns */}
           {customer.returnOrders.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+            <div className="bg-surface border border-gray-200 rounded-2xl overflow-hidden">
               <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100">
                 <div className="w-7 h-7 bg-orange-50 rounded-lg flex items-center justify-center">
                   <RotateCcw size={13} className="text-orange-600" />
@@ -193,7 +193,7 @@ export default function CustomerDetailPage() {
                 <tbody className="divide-y divide-gray-50">
                   {customer.returnOrders.map((r: any) => (
                     <tr key={r.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 font-mono text-xs text-blue-600 font-semibold">{r.orderNumber}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-brand-600 font-semibold">{r.orderNumber}</td>
                       <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(r.returnRequestDate)}</td>
                       <td className="px-4 py-3 font-semibold text-emerald-600">
                         {r.refundAmount ? formatINR(r.refundAmount) : "—"}
@@ -202,7 +202,7 @@ export default function CustomerDetailPage() {
                         <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
                           r.status === "APPROVED"  ? "bg-green-100 text-green-800"  :
                           r.status === "REJECTED"  ? "bg-red-100 text-red-800"     :
-                          r.status === "COMPLETED" ? "bg-blue-100 text-blue-800"   :
+                          r.status === "COMPLETED" ? "bg-brand-100 text-brand-800"   :
                           "bg-yellow-100 text-yellow-800"
                         }`}>
                           {r.status}
@@ -217,7 +217,7 @@ export default function CustomerDetailPage() {
 
           {/* Promo codes used */}
           {customer.customerPromocodes.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <div className="bg-surface border border-gray-200 rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-7 h-7 bg-purple-50 rounded-lg flex items-center justify-center">
                   <Tag size={13} className="text-purple-600" />
@@ -251,10 +251,10 @@ export default function CustomerDetailPage() {
         <div className="space-y-4">
 
           {/* Profile */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <div className="bg-surface border border-gray-200 rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
-                <User size={13} className="text-blue-600" />
+              <div className="w-7 h-7 bg-brand-50 rounded-lg flex items-center justify-center">
+                <User size={13} className="text-brand-600" />
               </div>
               <h2 className="font-semibold text-gray-900 text-sm">Profile</h2>
             </div>
@@ -290,7 +290,7 @@ export default function CustomerDetailPage() {
 
           {/* Addresses */}
           {customer.addresses.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-5">
+            <div className="bg-surface border border-gray-200 rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-7 h-7 bg-emerald-50 rounded-lg flex items-center justify-center">
                   <MapPin size={13} className="text-emerald-600" />
@@ -307,12 +307,12 @@ export default function CustomerDetailPage() {
                   <div key={addr.id}
                     className={`p-3 rounded-xl border text-xs leading-relaxed ${
                       addr.isDefault
-                        ? "border-blue-200 bg-blue-50"
+                        ? "border-brand-200 bg-brand-50"
                         : "border-gray-100 bg-gray-50"
                     }`}
                   >
                     {addr.isDefault && (
-                      <span className="inline-block mb-1.5 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-md text-xs font-semibold">
+                      <span className="inline-block mb-1.5 px-2 py-0.5 bg-brand-100 text-brand-700 rounded-md text-xs font-semibold">
                         Default
                       </span>
                     )}
@@ -323,7 +323,7 @@ export default function CustomerDetailPage() {
                     <p className="text-gray-600">{addr.city}, {addr.state}</p>
                     <p className="text-gray-500">{addr.country} — <span className="font-mono">{addr.pincode}</span></p>
                     {addr.addressType && (
-                      <span className="inline-block mt-1 px-2 py-0.5 bg-white border border-gray-200 text-gray-600 rounded-md capitalize">
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-surface border border-gray-200 text-gray-600 rounded-md capitalize">
                         {addr.addressType}
                       </span>
                     )}

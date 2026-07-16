@@ -60,8 +60,8 @@ export default function FormField({
 export function inputClass(error?: string, touched?: boolean) {
   const base = "w-full px-3 py-2 border rounded-xl text-sm focus:outline-none transition-all";
   if (touched && error)  return `${base} border-red-300 bg-red-50 focus:border-red-400 focus:ring-2 focus:ring-red-200`;
-  if (touched && !error) return `${base} border-emerald-300 bg-white focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200`;
-  return `${base} border-gray-200 bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-200`;
+  if (touched && !error) return `${base} border-emerald-300 bg-surface focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200`;
+  return `${base} border-gray-200 bg-surface focus:border-brand-400 focus:ring-2 focus:ring-brand-200`;
 }
 
 export function selectClass(error?: string, touched?: boolean) {

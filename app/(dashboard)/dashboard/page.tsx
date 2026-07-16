@@ -48,7 +48,7 @@ async function getStats() {
 
 const ORDER_STATUS_COLORS: Record<string, string> = {
   PAYMENT_PENDING: "bg-red-100 text-red-800",
-  PLACED: "bg-blue-100 text-blue-800",
+  PLACED: "bg-brand-100 text-brand-800",
   PROCESSING: "bg-yellow-100 text-yellow-800",
   SHIPPED: "bg-green-100 text-green-800",
   DELIVERED: "bg-green-100 text-green-800",
@@ -65,8 +65,8 @@ export default async function DashboardPage() {
       label: "Total Orders",
       value: stats.totalOrders.toLocaleString("en-IN"),
       icon: ShoppingBag,
-      color: "text-blue-600",
-      bg: "bg-blue-50",
+      color: "text-brand-600",
+      bg: "bg-brand-50",
     },
     {
       label: "Total Revenue",
@@ -103,7 +103,7 @@ export default async function DashboardPage() {
         {cards.map((c) => {
           const Icon = c.icon;
           return (
-            <div key={c.label} className="bg-white rounded-xl border border-gray-200 p-4">
+            <div key={c.label} className="bg-surface rounded-xl border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm text-gray-500">{c.label}</span>
                 <span className={`p-2 rounded-lg ${c.bg}`}>
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
       {/* Alerts + Recent Orders */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Alerts */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-surface rounded-xl border border-gray-200 p-4">
           <h2 className="font-medium text-gray-900 mb-3">Needs Attention</h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
@@ -134,7 +134,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Recent orders */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
+        <div className="lg:col-span-2 bg-surface rounded-xl border border-gray-200 p-4">
           <h2 className="font-medium text-gray-900 mb-3">Recent Orders</h2>
           <table className="w-full text-sm">
             <thead>

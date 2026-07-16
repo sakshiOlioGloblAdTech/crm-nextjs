@@ -54,7 +54,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-surface rounded-2xl shadow-sm border border-gray-200 p-8">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900">CRM Admin</h1>
             <p className="text-sm text-gray-500 mt-1">Sign in to your account</p>
@@ -100,7 +100,7 @@ export default function LoginPage() {
 
             <button
               type="submit" disabled={loading}
-              className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors mt-2"
+              className="w-full py-2.5 px-4 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors mt-2"
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>

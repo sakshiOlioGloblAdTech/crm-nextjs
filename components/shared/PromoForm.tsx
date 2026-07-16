@@ -89,7 +89,7 @@ export default function PromoForm({ initial = {}, mode }: Props) {
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/promocodes" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-400">
+        <Link href="/promocodes" className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 bg-surface hover:bg-gray-50 text-gray-400">
           <ArrowLeft size={16} />
         </Link>
         <div>
@@ -102,9 +102,9 @@ export default function PromoForm({ initial = {}, mode }: Props) {
         {error && <div className="px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl">{error}</div>}
 
         {/* Code Details */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center"><Tag size={13} className="text-blue-600" /></div>
+            <div className="w-7 h-7 bg-brand-50 rounded-lg flex items-center justify-center"><Tag size={13} className="text-brand-600" /></div>
             <h2 className="font-semibold text-gray-900 text-sm">Code Details</h2>
           </div>
 
@@ -120,7 +120,7 @@ export default function PromoForm({ initial = {}, mode }: Props) {
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">Status</label>
               <div className="flex items-center gap-2 mt-3">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" name="status" checked={form.status} onChange={handleChange} className="w-4 h-4 accent-blue-600" />
+                  <input type="checkbox" name="status" checked={form.status} onChange={handleChange} className="w-4 h-4 accent-brand-600" />
                   <span className="text-sm text-gray-700">Active</span>
                 </label>
               </div>
@@ -143,7 +143,7 @@ export default function PromoForm({ initial = {}, mode }: Props) {
         </div>
 
         {/* Discount Settings */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 space-y-4">
           <h2 className="font-semibold text-gray-900 text-sm mb-2">Discount Settings</h2>
 
           <div className="grid grid-cols-3 gap-4">
@@ -196,7 +196,7 @@ export default function PromoForm({ initial = {}, mode }: Props) {
         </div>
 
         {/* Scope */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6">
           <h2 className="font-semibold text-gray-900 text-sm mb-4">Promo Code Scope</h2>
           <div className="grid grid-cols-3 gap-4">
             {[
@@ -205,10 +205,10 @@ export default function PromoForm({ initial = {}, mode }: Props) {
               { name: "isSubcategory", label: "Subcategory Specific", desc: "Applies to selected subcategories" },
             ].map((f) => (
               <label key={f.name} className={`flex flex-col gap-1 p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                (form as any)[f.name] ? "border-blue-400 bg-blue-50" : "border-gray-200 hover:border-gray-300"
+                (form as any)[f.name] ? "border-brand-400 bg-brand-50" : "border-gray-200 hover:border-gray-300"
               }`}>
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" name={f.name} checked={(form as any)[f.name]} onChange={handleChange} className="w-4 h-4 accent-blue-600" />
+                  <input type="checkbox" name={f.name} checked={(form as any)[f.name]} onChange={handleChange} className="w-4 h-4 accent-brand-600" />
                   <span className="text-sm font-semibold text-gray-800">{f.label}</span>
                 </div>
                 <p className="text-xs text-gray-400 pl-6">{f.desc}</p>
@@ -218,7 +218,7 @@ export default function PromoForm({ initial = {}, mode }: Props) {
         </div>
 
         <button type="submit" disabled={loading}
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50">
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50">
           <Save size={15} />
           {loading ? "Saving..." : mode === "edit" ? "Update Promo Code" : "Create Promo Code"}
         </button>

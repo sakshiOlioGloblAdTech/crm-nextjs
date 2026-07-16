@@ -56,19 +56,19 @@ export default function ReturnsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <div className="bg-surface rounded-2xl border border-gray-200 overflow-hidden">
         {/* Filters */}
         <div className="p-4 border-b border-gray-100 flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-[200px] max-w-xs">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input type="text" placeholder="Search order #, customer..."
               value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
           </div>
           <div className="flex items-center gap-2">
             <Filter size={14} className="text-gray-400" />
             <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-              className="px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+              className="px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
               {STATUSES.map((s) => (
                 <option key={s} value={s}>{s || "All Statuses"}</option>
               ))}
@@ -96,7 +96,7 @@ export default function ReturnsPage() {
             )}
             {returns.map((r) => (
               <tr key={r.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3 font-mono text-xs text-blue-600 font-medium">{r.orderNumber}</td>
+                <td className="px-4 py-3 font-mono text-xs text-brand-600 font-medium">{r.orderNumber}</td>
                 <td className="px-4 py-3">
                   <p className="font-medium text-gray-900 text-sm">{r.customer.name}</p>
                   <p className="text-xs text-gray-400">{r.customer.email}</p>
@@ -120,7 +120,7 @@ export default function ReturnsPage() {
                 <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(r.returnRequestDate)}</td>
                 <td className="px-4 py-3">
                   <Link href={`/returns/${r.id}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50 rounded-lg transition-colors">
                     <Eye size={12} /> View
                   </Link>
                 </td>

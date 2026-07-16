@@ -52,7 +52,7 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <div className="bg-surface rounded-2xl border border-gray-200 overflow-hidden">
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3 p-4 border-b border-gray-100">
           <div className="relative flex-1 min-w-[200px] max-w-xs">
@@ -62,7 +62,7 @@ export default function CustomersPage() {
               placeholder="Search name, email, phone..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -70,7 +70,7 @@ export default function CustomersPage() {
             <select
               value={status}
               onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-              className="px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <option value="">All Customers</option>
               <option value="true">Active</option>
@@ -110,8 +110,8 @@ export default function CustomersPage() {
               <tr key={c.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-                      <span className="text-xs font-bold text-blue-600">
+                    <div className="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-xs font-bold text-brand-600">
                         {c.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                       </span>
                     </div>
@@ -122,7 +122,7 @@ export default function CustomersPage() {
                 <td className="px-4 py-3 text-gray-500 text-sm">{c.mobileNumber ?? "—"}</td>
                 <td className="px-4 py-3 text-gray-500 text-sm capitalize">{c.gender ?? "—"}</td>
                 <td className="px-4 py-3">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-semibold">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-brand-50 text-brand-700 rounded-lg text-xs font-semibold">
                     {c._count.orders} orders
                   </span>
                 </td>
@@ -137,7 +137,7 @@ export default function CustomersPage() {
                 <td className="px-4 py-3">
                   <Link
                     href={`/customers/${c.id}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
                   >
                     <Eye size={12} /> View
                   </Link>
