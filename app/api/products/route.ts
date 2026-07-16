@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
       images, shortDescription, description, altTag,
       metaTitle, metaDescription, metaKeywords, productSchema,
       isFeatured, status, isNew, isBestSeller, variations,
+      personalizationEnabled, personalizationPrice,
     } = body;
 
     if (!subcategoryId || !productName) {
@@ -67,6 +68,11 @@ export async function POST(req: NextRequest) {
         status: status ?? false,
         isNew: isNew ?? false,
         isBestSeller: isBestSeller ?? false,
+        personalizationEnabled: personalizationEnabled ?? false,
+        personalizationPrice:
+          personalizationPrice === "" || personalizationPrice == null
+            ? null
+            : parseFloat(personalizationPrice),
         variations: variations?.length
           ? {
             create: variations.map((v: any, i: number) => ({

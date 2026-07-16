@@ -161,6 +161,10 @@ model Product {
   status           Boolean  @default(false)
   isNew            Boolean  @default(false)
   isBestSeller     Boolean  @default(false)
+  /// Storefront personalization (custom name / font / image on the product page).
+  /// personalizationPrice is the extra charged when the customer personalizes it.
+  personalizationEnabled Boolean  @default(false)
+  personalizationPrice   Decimal? @db.Decimal(10, 2)
   broughtTogetherId Int?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

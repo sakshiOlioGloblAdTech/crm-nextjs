@@ -130,6 +130,11 @@ export function shapeProductDetail(p: any) {
     description: p.description,
     metaTitle: p.metaTitle ?? null,
     metaDescription: p.metaDescription ?? null,
+    // Drives the storefront's "Add Personalized Text / Font / Image" block.
+    personalization: {
+      enabled: Boolean(p.personalizationEnabled),
+      price: p.personalizationPrice != null ? toNumber(p.personalizationPrice) : 0,
+    },
     variations,
   };
 }

@@ -76,6 +76,8 @@ export default function ProductForm({ initial = {}, mode }: Props) {
     status:          initial.status          ?? false,
     isNew:           initial.isNew           ?? false,
     isBestSeller:    initial.isBestSeller    ?? false,
+    personalizationEnabled: initial.personalizationEnabled ?? false,
+    personalizationPrice:   initial.personalizationPrice?.toString() ?? "",
   });
 
   useEffect(() => {
@@ -273,6 +275,52 @@ export default function ProductForm({ initial = {}, mode }: Props) {
               </label>
             ))}
           </div>
+        </div>
+
+        {/* Personalization */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+          <div>
+            <h2 className="font-semibold text-gray-900 text-sm">Personalization</h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Controls the &ldquo;Add Personalized Text / Select Font / Upload Image&rdquo;
+              section on the storefront product page.
+            </p>
+          </div>
+
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="personalizationEnabled"
+              checked={form.personalizationEnabled}
+              onChange={handleChange}
+              className="w-4 h-4 accent-blue-600"
+            />
+            <span className="text-sm text-gray-700">
+              Allow personalization for this product
+            </span>
+          </label>
+
+          {form.personalizationEnabled && (
+            <div className="max-w-xs">
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Additional Charge (₹)
+              </label>
+              <input
+                type="number"
+                name="personalizationPrice"
+                min="0"
+                step="0.01"
+                value={form.personalizationPrice}
+                onChange={handleChange}
+                className={inputClass()}
+                placeholder="0.00"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Added to the item price when a customer personalizes it. Leave
+                blank or 0 to offer it free.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Variations */}

@@ -34,6 +34,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       images, shortDescription, description, altTag,
       metaTitle, metaDescription, metaKeywords, productSchema,
       isFeatured, status, isNew, isBestSeller,
+      personalizationEnabled, personalizationPrice,
     } = body;
 
     const product = await prisma.product.update({
@@ -45,6 +46,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         shortDescription, description, altTag,
         metaTitle, metaDescription, metaKeywords, productSchema,
         isFeatured, status, isNew, isBestSeller,
+        personalizationEnabled: personalizationEnabled ?? false,
+        personalizationPrice:
+          personalizationPrice === "" || personalizationPrice == null
+            ? null
+            : parseFloat(personalizationPrice),
       },
     });
     return NextResponse.json(product);
