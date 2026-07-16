@@ -13,6 +13,7 @@ const EVENTS = [
   { event: "RETURN_APPROVED", label: "Return Approved", desc: "Sent when a return request is approved", icon: "🔄" },
   { event: "RETURN_REJECTED", label: "Return Rejected", desc: "Sent when a return request is rejected", icon: "🚫" },
   { event: "WARRANTY_APPROVED", label: "Warranty Approved", desc: "Sent when warranty claim is approved", icon: "🛡️" },
+  { event: "OCCASION_REMINDER", label: "Occasion Reminder", desc: "Sent ahead of a customer's birthday or anniversary", icon: "🎂" },
 ];
 
 const VARIABLES_HELP = [
@@ -22,6 +23,11 @@ const VARIABLES_HELP = [
   { var: "{{orderStatus}}", desc: "Current order status" },
   { var: "{{trackingNumber}}", desc: "AWB / tracking number" },
   { var: "{{courierName}}", desc: "Courier company name" },
+  // Occasion reminder only
+  { var: "{{occasionType}}", desc: "Birthday or Anniversary" },
+  { var: "{{occasionDate}}", desc: "Date of the occasion" },
+  { var: "{{daysUntil}}", desc: "Days remaining until the occasion" },
+  { var: "{{shopUrl}}", desc: "Link to the storefront" },
 ];
 
 const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";

@@ -9,6 +9,7 @@
     "lint": "eslint",
     "db:seed": "ts-node prisma/seed.ts",
     "db:seed:catalog": "ts-node prisma/seed-catalog.ts",
+    "db:seed:notifications": "ts-node prisma/seed-notifications.ts",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:generate": "prisma generate"

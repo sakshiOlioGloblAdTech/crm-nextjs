@@ -48,6 +48,8 @@ model Customer {
   mobileNumber  String?   @unique
   photo         String?
   dob           DateTime? @db.Date
+  /// Wedding/relationship anniversary — powers OCCASION_REMINDER emails.
+  anniversary   DateTime? @db.Date
   gender        String?
   password      String
   uniqueId      String
@@ -577,6 +579,22 @@ model State {
   updatedAt DateTime @updatedAt
 
   @@map("states")
+}
+
+/// Email/SMS templates for transactional + reminder events, edited from
+/// Settings → Notifications. `event` is the key (ORDER_PLACED, OCCASION_REMINDER…)
+/// and bodies support {{variable}} placeholders.
+model NotificationTemplate {
+  id        Int      @id @default(autoincrement())
+  event     String   @unique
+  subject   String
+  emailBody String
+  smsBody   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notification_templates")
 }
 
 /// Storefront email-OTP login. The code is stored hashed (bcrypt) and is
