@@ -30,7 +30,8 @@ const VARIABLES_HELP = [
   { var: "{{shopUrl}}", desc: "Link to the storefront" },
 ];
 
-const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const INPUT =
+  "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
 export default function NotificationsPage() {
   const [templates, setTemplates] = useState<Record<string, any>>({});
@@ -92,14 +93,14 @@ export default function NotificationsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-xl font-bold text-gray-900">Notification Templates</h1>
-        <p className="text-sm text-gray-400 mt-0.5">Configure email and SMS templates for order events</p>
+        <p className="text-sm text-gray-500 mt-0.5">Configure email and SMS templates for order events</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Event list */}
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Events</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Events</p>
           </div>
           <div className="divide-y divide-gray-50">
             {EVENTS.map(e => {
@@ -111,7 +112,7 @@ export default function NotificationsPage() {
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-semibold ${activeEvent === e.event ? "text-blue-700" : "text-gray-900"}`}>{e.label}</p>
                     {hasTemplate && <p className="text-xs text-emerald-500 font-medium">Configured</p>}
-                    {!hasTemplate && <p className="text-xs text-gray-400">Not configured</p>}
+                    {!hasTemplate && <p className="text-xs text-gray-500">Not configured</p>}
                   </div>
                 </button>
               );
@@ -133,7 +134,7 @@ export default function NotificationsPage() {
                 <span className="text-xl">{activeEventDef.icon}</span>
                 <div>
                   <h2 className="font-bold text-gray-900 text-sm">{activeEventDef.label}</h2>
-                  <p className="text-xs text-gray-400">{activeEventDef.desc}</p>
+                  <p className="text-xs text-gray-500">{activeEventDef.desc}</p>
                 </div>
               </div>
               <label className="flex items-center gap-2 cursor-pointer">
@@ -154,10 +155,10 @@ export default function NotificationsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">SMS Body <span className="text-gray-400 font-normal">(optional)</span></label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">SMS Body <span className="text-gray-500 font-normal">(optional)</span></label>
               <textarea value={form.smsBody} onChange={e => setForm({ ...form, smsBody: e.target.value })} rows={3} className={INPUT}
                 placeholder="Order {{orderNumber}} placed. Total: {{orderTotal}}. Thank you!" />
-              <p className="text-xs text-gray-400 mt-1">Keep under 160 characters for single SMS</p>
+              <p className="text-xs text-gray-500 mt-1">Keep under 160 characters for single SMS</p>
             </div>
 
             <button onClick={handleSave} disabled={saving || !form.subject || !form.emailBody}
@@ -169,7 +170,7 @@ export default function NotificationsPage() {
 
           {/* Variables help */}
           <div className="bg-white border border-gray-200 rounded-2xl p-5">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Available Variables</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Available Variables</p>
             <div className="grid grid-cols-2 gap-2">
               {VARIABLES_HELP.map(v => (
                 <div key={v.var} className="flex items-center gap-2">
