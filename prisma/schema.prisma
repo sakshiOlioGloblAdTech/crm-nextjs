@@ -574,3 +574,18 @@ model State {
 
   @@map("states")
 }
+
+/// Storefront email-OTP login. The code is stored hashed (bcrypt) and is
+/// single-use: rows are consumed on success and expire after a few minutes.
+model EmailOtp {
+  id         Int       @id @default(autoincrement())
+  email      String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([email])
+  @@map("email_otps")
+}
