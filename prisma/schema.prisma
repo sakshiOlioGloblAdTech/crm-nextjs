@@ -202,6 +202,21 @@ model Review {
   @@map("reviews")
 }
 
+/** Lead capture from the storefront forms: contact, newsletter, quote, vendor. */
+model StoreEnquiry {
+  id        Int      @id @default(autoincrement())
+  type      String
+  name      String?
+  email     String?
+  phone     String?
+  message   String?
+  payload   Json?
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+
+  @@map("store_enquiries")
+}
+
 model ProductVariation {
   id             Int      @id @default(autoincrement())
   productId      Int
