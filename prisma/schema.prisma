@@ -65,6 +65,7 @@ model Customer {
   carts              Cart[]
   customerPromocodes CustomerPromocode[]
   returnOrders       ReturnOrder[]
+  reviews            Review[]
 
   @@map("customers")
 }
@@ -178,8 +179,27 @@ model Product {
   carts             Cart[]
   orderDetails      OrderDetail[]
   productPromocodes ProductPromocode[]
+  reviews           Review[]
 
   @@map("products")
+}
+
+/** Storefront product reviews. status: "approved" shows on the site. */
+model Review {
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  customerId Int
+  rating     Int
+  title      String?
+  body       String
+  status     String   @default("approved")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
 }
 
 model ProductVariation {
