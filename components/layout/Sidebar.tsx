@@ -7,7 +7,7 @@ import {
   LayoutDashboard, ShoppingBag, Package, Users, Tag,
   RotateCcw, Shield, BarChart2, Image, Settings,
   ChevronDown, UserCog, Layers, XCircle, RefreshCcw,
-  FileText, CreditCard, Bell,
+  FileText, CreditCard, Bell, MessageSquare, Inbox,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -40,11 +40,13 @@ const navGroups = [
     label: "Customers",
     items: [
       { href: "/customers", label: "Customers", icon: Users },
+      { href: "/reviews", label: "Reviews", icon: MessageSquare },
     ],
   },
   {
     label: "Marketing",
     items: [
+      { href: "/enquiries", label: "Leads", icon: Inbox },
       { href: "/promocodes", label: "Promo Codes", icon: Tag },
       { href: "/banners", label: "Home Banners", icon: Image },
     ],
