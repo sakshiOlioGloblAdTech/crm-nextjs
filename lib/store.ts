@@ -93,14 +93,26 @@ export function shapeProductCard(p: any) {
     compareAtPrice,
     category: p.subcategory?.category?.name ?? null,
     subcategory: p.subcategory?.name ?? null,
-    badge: p.isBestSeller
-      ? "Bestseller"
-      : p.isNew
-        ? "New"
-        : p.isFeatured
-          ? "Featured"
-          : undefined,
+    // Explicit badge field wins; else derive from the flags.
+    badge:
+      p.badge ??
+      (p.isBestSeller
+        ? "Bestseller"
+        : p.isNew
+          ? "New"
+          : p.isFeatured
+            ? "Featured"
+            : undefined),
     inStock: variations.some((v: any) => v.stock > 0),
+    // Storefront merchandising fields.
+    giftMode: p.giftMode ?? "both",
+    occasions: p.occasions ?? [],
+    recipients: p.recipients ?? [],
+    hamperTier: p.hamperTier ?? null,
+    rating: p.rating ?? null,
+    reviewCount: p.reviewCount ?? null,
+    deliveryTimeline: p.deliveryTimeline ?? null,
+    maxQtyPerOrder: p.maxQtyPerOrder ?? null,
   };
 }
 
