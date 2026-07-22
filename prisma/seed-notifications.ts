@@ -21,6 +21,14 @@ const TEMPLATES: {
   smsBody?: string;
 }[] = [
   {
+    event: "CART_ABANDONMENT",
+    subject: "{{customerName}}, you left something behind 🛍️",
+    emailBody:
+      "Hi {{customerName}},\n\nYou've got {{itemCount}} item(s) waiting in your Plattera cart — still available and ready when you are.\n\nPick up where you left off: {{shopUrl}}\n\n— Team Plattera",
+    smsBody:
+      "Plattera: {{itemCount}} item(s) are waiting in your cart. Complete your order: {{shopUrl}}",
+  },
+  {
     event: "ORDER_PLACED",
     subject: "Your Plattera order {{orderNumber}} is confirmed",
     emailBody:

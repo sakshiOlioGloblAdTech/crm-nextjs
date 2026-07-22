@@ -139,3 +139,99 @@ export async function sendOccasionReminders() {
     failed,
   };
 }
+
+const CART_ABANDON_HOURS = Number(process.env.CART_ABANDONMENT_HOURS ?? 4);
+const CART_COOLDOWN_DAYS = Number(process.env.CART_ABANDONMENT_COOLDOWN_DAYS ?? 7);
+const CART_MAX_AGE_DAYS = 14; // don't chase carts idle longer than this
+
+/**
+ * Email customers whose cart has been idle for CART_ABANDON_HOURS (but not
+ * older than CART_MAX_AGE_DAYS). Dedups per customer within a cooldown window
+ * so they aren't nagged repeatedly. Only signed-in customers (guests have no
+ * email). Delivery is live once SMTP is configured; until then status "logged".
+ */
+export async function sendCartAbandonmentReminders() {
+  const template = await prisma.notificationTemplate.findUnique({
+    where: { event: "CART_ABANDONMENT" },
+  });
+  if (!template || template.isActive === false) {
+    return {
+      ok: false,
+      reason: "CART_ABANDONMENT template missing or inactive",
+    };
+  }
+
+  const now = Date.now();
+  const idleBefore = new Date(now - CART_ABANDON_HOURS * 3_600_000);
+  const notOlderThan = new Date(now - CART_MAX_AGE_DAYS * 86_400_000);
+
+  const rows = await prisma.$queryRaw<
+    Array<{ id: number; name: string; email: string; item_count: number }>
+  >`
+    SELECT c.id, c.name, c.email, COUNT(*)::int AS item_count
+    FROM carts ct JOIN customers c ON c.id = ct."customerId"
+    WHERE ct."customerId" IS NOT NULL AND c.email IS NOT NULL AND c.status = true
+    GROUP BY c.id, c.name, c.email
+    HAVING MAX(ct."updatedAt") < ${idleBefore} AND MAX(ct."updatedAt") > ${notOlderThan}
+  `;
+
+  const cooldownStart = new Date(now - CART_COOLDOWN_DAYS * 86_400_000);
+  let sent = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const r of rows) {
+    const already = await prisma.notificationLog.findFirst({
+      where: {
+        event: "CART_ABANDONMENT",
+        recipient: r.email,
+        createdAt: { gte: cooldownStart },
+      },
+    });
+    if (already) {
+      skipped++;
+      continue;
+    }
+
+    const vars = {
+      customerName: r.name,
+      itemCount: String(r.item_count),
+      shopUrl: shopUrl(),
+    };
+    const subject = renderTemplate(template.subject, vars);
+    const text = renderTemplate(template.emailBody, vars);
+
+    try {
+      const { delivered } = await sendMail({ to: r.email, subject, text });
+      await prisma.notificationLog.create({
+        data: {
+          event: "CART_ABANDONMENT",
+          recipient: r.email,
+          channel: "email",
+          status: delivered ? "sent" : "logged",
+        },
+      });
+      sent++;
+    } catch (e) {
+      await prisma.notificationLog.create({
+        data: {
+          event: "CART_ABANDONMENT",
+          recipient: r.email,
+          channel: "email",
+          status: "failed",
+          error: String(e).slice(0, 250),
+        },
+      });
+      failed++;
+    }
+  }
+
+  return {
+    ok: true,
+    idleHours: CART_ABANDON_HOURS,
+    matched: rows.length,
+    sent,
+    skipped,
+    failed,
+  };
+}
