@@ -73,6 +73,22 @@ export async function POST(req: NextRequest) {
           personalizationPrice === "" || personalizationPrice == null
             ? null
             : parseFloat(personalizationPrice),
+        giftMode: body.giftMode || "both",
+        occasions: Array.isArray(body.occasions) ? body.occasions : [],
+        recipients: Array.isArray(body.recipients) ? body.recipients : [],
+        hamperTier: body.hamperTier || null,
+        rating:
+          body.rating === "" || body.rating == null ? null : parseFloat(body.rating),
+        reviewCount:
+          body.reviewCount === "" || body.reviewCount == null
+            ? null
+            : parseInt(body.reviewCount),
+        badge: body.badge || null,
+        deliveryTimeline: body.deliveryTimeline || null,
+        maxQtyPerOrder:
+          body.maxQtyPerOrder === "" || body.maxQtyPerOrder == null
+            ? null
+            : parseInt(body.maxQtyPerOrder),
         variations: variations?.length
           ? {
             create: variations.map((v: any, i: number) => ({

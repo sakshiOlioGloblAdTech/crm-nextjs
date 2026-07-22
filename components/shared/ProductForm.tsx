@@ -78,6 +78,17 @@ export default function ProductForm({ initial = {}, mode }: Props) {
     isBestSeller:    initial.isBestSeller    ?? false,
     personalizationEnabled: initial.personalizationEnabled ?? false,
     personalizationPrice:   initial.personalizationPrice?.toString() ?? "",
+    // Storefront merchandising
+    giftMode:         initial.giftMode ?? "both",
+    occasions:        (initial.occasions ?? []).join(", "),
+    recipients:       (initial.recipients ?? []).join(", "),
+    hamperTier:       initial.hamperTier ?? "",
+    rating:           initial.rating?.toString() ?? "",
+    reviewCount:      initial.reviewCount?.toString() ?? "",
+    badge:            initial.badge ?? "",
+    deliveryTimeline: initial.deliveryTimeline ?? "",
+    maxQtyPerOrder:   initial.maxQtyPerOrder?.toString() ?? "",
+    images:           (initial.images ?? []).join("\n"),
   });
 
   useEffect(() => {
@@ -163,7 +174,13 @@ export default function ProductForm({ initial = {}, mode }: Props) {
 
     const res  = await fetch(url, {
       method, headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, variations }),
+      body: JSON.stringify({
+        ...form,
+        occasions: form.occasions.split(",").map((s) => s.trim()).filter(Boolean),
+        recipients: form.recipients.split(",").map((s) => s.trim()).filter(Boolean),
+        images: form.images.split("\n").map((s) => s.trim()).filter(Boolean),
+        variations,
+      }),
     });
     const data = await res.json();
     setLoading(false);
@@ -321,6 +338,93 @@ export default function ProductForm({ initial = {}, mode }: Props) {
               </p>
             </div>
           )}
+        </div>
+
+        {/* Merchandising & Storefront */}
+        <div className="bg-surface rounded-2xl border border-gray-200 p-6 space-y-4">
+          <div>
+            <h2 className="font-semibold text-gray-900 text-sm">Merchandising &amp; Storefront</h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Controls how this product appears and filters on the storefront.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Product Images</label>
+            <textarea
+              name="images"
+              value={form.images}
+              onChange={handleChange}
+              rows={3}
+              className={textareaClass()}
+              placeholder="One image URL per line (up to 4). File upload arrives with cloud storage."
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Shown in the product gallery. One shareable/hosted image URL per line.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Gift Mode</label>
+              <select name="giftMode" value={form.giftMode} onChange={handleChange} className={selectClass()}>
+                <option value="both">Both (Personal &amp; Corporate)</option>
+                <option value="personal">Personal (B2C)</option>
+                <option value="corporate">Corporate (B2B)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Badge</label>
+              <select name="badge" value={form.badge} onChange={handleChange} className={selectClass()}>
+                <option value="">None</option>
+                <option value="Bestseller">Bestseller</option>
+                <option value="New">New</option>
+                <option value="Limited Edition">Limited Edition</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Occasions</label>
+            <input name="occasions" value={form.occasions} onChange={handleChange} className={inputClass()}
+              placeholder="Comma-separated, e.g. Diwali, Birthday, Anniversary" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Recipients</label>
+            <input name="recipients" value={form.recipients} onChange={handleChange} className={inputClass()}
+              placeholder="Comma-separated, e.g. Employees, Clients, Her, Him" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Rating (0-5)</label>
+              <input type="number" name="rating" min="0" max="5" step="0.1" value={form.rating}
+                onChange={handleChange} className={inputClass()} placeholder="4.5" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Review Count</label>
+              <input type="number" name="reviewCount" min="0" value={form.reviewCount}
+                onChange={handleChange} className={inputClass()} placeholder="256" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Delivery Timeline</label>
+              <input name="deliveryTimeline" value={form.deliveryTimeline} onChange={handleChange}
+                className={inputClass()} placeholder="4-7 business days" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Max Qty / Order</label>
+              <input type="number" name="maxQtyPerOrder" min="1" value={form.maxQtyPerOrder}
+                onChange={handleChange} className={inputClass()} placeholder="10" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Hamper Tier</label>
+              <input name="hamperTier" value={form.hamperTier} onChange={handleChange}
+                className={inputClass()} placeholder="e.g. Festive, Premium, ₹500" />
+            </div>
+          </div>
         </div>
 
         {/* Variations */}
