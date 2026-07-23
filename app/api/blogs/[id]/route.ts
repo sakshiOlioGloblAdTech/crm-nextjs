@@ -51,7 +51,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (error.code === "P2002") {
       return NextResponse.json({ error: "A blog with this title already exists" }, { status: 400 });
     }
-    return NextResponse.json({ error: "Failed to update blog" }, { status: 500 });
+    console.error("PUT /api/blogs/[id] failed", error);
+    return NextResponse.json(
+      { error: "Failed to update blog", detail: String(error?.message ?? error), code: error?.code },
+      { status: 500 },
+    );
   }
 }
 

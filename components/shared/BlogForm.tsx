@@ -75,7 +75,10 @@ export default function BlogForm({ initial = {}, mode }: BlogFormProps) {
     });
     const data = await res.json();
     setLoading(false);
-    if (!res.ok) { setError(data.error ?? "Something went wrong"); return; }
+    if (!res.ok) {
+      setError(data.detail ? `${data.error}: ${data.detail}` : (data.error ?? "Something went wrong"));
+      return;
+    }
     router.push("/blogs");
     router.refresh();
   }

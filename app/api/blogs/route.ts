@@ -43,6 +43,10 @@ export async function POST(req: NextRequest) {
     if (error.code === "P2002") {
       return NextResponse.json({ error: "A blog with this title already exists" }, { status: 400 });
     }
-    return NextResponse.json({ error: "Failed to create blog" }, { status: 500 });
+    console.error("POST /api/blogs failed", error);
+    return NextResponse.json(
+      { error: "Failed to create blog", detail: String(error?.message ?? error), code: error?.code },
+      { status: 500 },
+    );
   }
 }
