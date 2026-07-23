@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     }
     console.error("POST /api/blogs failed", error);
     return NextResponse.json(
-      { error: "Failed to create blog", detail: String(error?.message ?? error), code: error?.code },
+      { error: "Could not save the blog. Please try again." },
       { status: 500 },
     );
   }

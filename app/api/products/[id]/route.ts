@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { prismaErrorResponse } from "@/lib/prisma-error";
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -70,8 +71,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       },
     });
     return NextResponse.json(product);
-  } catch {
-    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+  } catch (error: any) {
+    return prismaErrorResponse(
+      error,
+      "Could not update the product. Please check the fields and try again.",
+    );
   }
 }
 

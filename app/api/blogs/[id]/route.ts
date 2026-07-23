@@ -53,7 +53,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
     console.error("PUT /api/blogs/[id] failed", error);
     return NextResponse.json(
-      { error: "Failed to update blog", detail: String(error?.message ?? error), code: error?.code },
+      { error: "Could not update the blog. Please try again." },
       { status: 500 },
     );
   }

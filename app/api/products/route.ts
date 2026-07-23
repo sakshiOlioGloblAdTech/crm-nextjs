@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { prismaErrorResponse } from "@/lib/prisma-error";
 
 export async function GET(req: NextRequest) {
   try {
@@ -55,6 +56,32 @@ export async function POST(req: NextRequest) {
 
     if (!subcategoryId || !productName) {
       return NextResponse.json({ error: "Subcategory and product name are required" }, { status: 400 });
+    }
+
+    // Give a clear, specific SKU-conflict message (names the exact value) so the
+    // admin immediately knows what to fix — before the generic DB error fires.
+    const skus: string[] = (variations ?? [])
+      .map((v: any) => (v?.sku ?? "").trim())
+      .filter(Boolean);
+    const dupInForm = skus.find((s, i) => skus.indexOf(s) !== i);
+    if (dupInForm) {
+      return NextResponse.json(
+        { error: `Duplicate SKU "${dupInForm}" within this product — each variation needs its own unique SKU.` },
+        { status: 400 },
+      );
+    }
+    if (skus.length) {
+      const taken = await prisma.productVariation.findMany({
+        where: { sku: { in: skus } },
+        select: { sku: true },
+      });
+      if (taken.length) {
+        const list = [...new Set(taken.map((t) => t.sku))].map((s) => `"${s}"`).join(", ");
+        return NextResponse.json(
+          { error: `SKU ${list} is already used by another product. Each SKU must be unique — please change it.` },
+          { status: 400 },
+        );
+      }
     }
 
     const product = await prisma.product.create({
@@ -113,6 +140,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(product, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message ?? "Failed to create product" }, { status: 500 });
+    return prismaErrorResponse(
+      error,
+      "Could not save the product. Please check the fields and try again.",
+    );
   }
 }
