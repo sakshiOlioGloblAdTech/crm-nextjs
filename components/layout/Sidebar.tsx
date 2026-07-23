@@ -49,6 +49,7 @@ const navGroups = [
       { href: "/enquiries", label: "Leads", icon: Inbox },
       { href: "/promocodes", label: "Promo Codes", icon: Tag },
       { href: "/banners", label: "Home Banners", icon: Image },
+      { href: "/blogs", label: "Blogs", icon: FileText },
     ],
   },
   {

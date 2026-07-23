@@ -232,6 +232,34 @@ model StoreEnquiry {
   @@map("store_enquiries")
 }
 
+/**
+ * Blog posts authored in the admin and shown on the storefront.
+ * status: "published" appears on the site; "draft" is hidden. `content` is the
+ * article body in lightweight markdown (## heading, - bullet, blank-line paras).
+ */
+model Blog {
+  id              Int       @id @default(autoincrement())
+  title           String
+  slug            String    @unique
+  excerpt         String?
+  content         String?
+  image           String?
+  altTag          String?
+  author          String?
+  category        String?
+  readTime        String?
+  status          String    @default("draft")
+  publishedAt     DateTime?
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([status])
+  @@map("blogs")
+}
+
 // ── Models reconciled from the live DB (previously drift) ─────────────────
 // These tables existed in the database but were missing from this schema.
 // Columns/types mirror the DB exactly (introspected) so `db push` is a no-op.
