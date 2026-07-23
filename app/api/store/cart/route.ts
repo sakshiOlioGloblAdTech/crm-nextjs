@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { storeJson, handleOptions } from "@/lib/store";
 import {
@@ -72,7 +73,9 @@ export async function POST(req: NextRequest) {
             ...ownerWhere(owner),
             productId: resolved.product.id,
             variationId: resolved.variation.id,
-            personalization: { equals: null },
+            // Plain lines store SQL NULL; DbNull matches it ({ equals: null }
+            // looks for a JSON null value and never matches, causing duplicates).
+            personalization: { equals: Prisma.DbNull },
           },
         });
 
@@ -90,7 +93,9 @@ export async function POST(req: NextRequest) {
           productId: resolved.product.id,
           variationId: resolved.variation.id,
           quantity,
-          personalization: hasPersonalization ? personalization : undefined,
+          personalization: hasPersonalization
+            ? (personalization as Prisma.InputJsonValue)
+            : Prisma.DbNull,
         },
       });
     }

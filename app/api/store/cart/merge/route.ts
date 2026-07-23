@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { storeJson, handleOptions } from "@/lib/store";
 import { getCustomerFromRequest } from "@/lib/customer-auth";
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
               customerId: customer.id,
               productId: g.productId,
               variationId: g.variationId,
-              personalization: { equals: null },
+              personalization: { equals: Prisma.DbNull },
             },
           })
         : null;
