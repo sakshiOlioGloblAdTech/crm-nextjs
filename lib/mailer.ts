@@ -107,7 +107,17 @@ async function sendViaResend({ to, subject, text, html }: MailInput) {
 
 export async function sendMail({ to, subject, text, html }: MailInput) {
   if (RESEND_API_KEY) {
-    return sendViaResend({ to, subject, text, html });
+    try {
+      return await sendViaResend({ to, subject, text, html });
+    } catch (e) {
+      // Degrade gracefully instead of failing the request — e.g. Resend test
+      // mode only allows the account owner's address until a domain is verified.
+      // Log so the code is still recoverable; the caller sees delivered:false.
+      console.warn(
+        `[mailer] Resend send failed (${String(e)}); not delivered.\n  to: ${to}\n  subject: ${subject}\n  ${text}`,
+      );
+      return { delivered: false as const };
+    }
   }
 
   if (!transporter) {
