@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Filter, Star, MessageSquare, Eye, EyeOff } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { TableLoading } from "@/components/shared/Spinner";
 
 interface Review {
   id: number;
@@ -100,9 +101,7 @@ export default function ReviewsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {loading && (
-                <tr><td colSpan={7} className="py-16 text-center text-gray-400">Loading…</td></tr>
-              )}
+              {loading && <TableLoading colSpan={7} />}
               {!loading && reviews.length === 0 && (
                 <tr>
                   <td colSpan={7} className="py-16 text-center">

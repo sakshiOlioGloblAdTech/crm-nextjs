@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Search, Filter, Inbox } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { TableLoading } from "@/components/shared/Spinner";
 
 interface Enquiry {
   id: number;
@@ -107,9 +108,7 @@ export default function EnquiriesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {loading && (
-                <tr><td colSpan={6} className="py-16 text-center text-gray-400">Loading…</td></tr>
-              )}
+              {loading && <TableLoading colSpan={6} />}
               {!loading && enquiries.length === 0 && (
                 <tr>
                   <td colSpan={6} className="py-16 text-center">

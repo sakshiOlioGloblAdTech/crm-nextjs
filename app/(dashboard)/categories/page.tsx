@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { TableLoading } from "@/components/shared/Spinner";
 
 interface Category {
   id: number;
@@ -91,9 +92,7 @@ export default function CategoriesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {loading && (
-              <tr><td colSpan={7} className="py-12 text-center text-gray-400">Loading...</td></tr>
-            )}
+            {loading && <TableLoading colSpan={7} />}
             {!loading && filtered.length === 0 && (
               <tr><td colSpan={7} className="py-12 text-center text-gray-400">No categories found</td></tr>
             )}

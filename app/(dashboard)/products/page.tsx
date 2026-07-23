@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 import { formatINR, formatDate } from "@/lib/utils";
+import { TableLoading } from "@/components/shared/Spinner";
 
 interface Product {
   id: number;
@@ -94,7 +95,7 @@ export default function ProductsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {loading && <tr><td colSpan={7} className="py-12 text-center text-gray-400">Loading...</td></tr>}
+            {loading && <TableLoading colSpan={7} />}
             {!loading && products.length === 0 && (
               <tr>
                 <td colSpan={7} className="py-12 text-center">

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Search, Eye, Users, Filter } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { TableLoading } from "@/components/shared/Spinner";
 
 interface Customer {
   id: number;
@@ -91,13 +92,7 @@ export default function CustomersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {loading && (
-              <tr>
-                <td colSpan={8} className="py-16 text-center text-gray-400">
-                  Loading customers...
-                </td>
-              </tr>
-            )}
+            {loading && <TableLoading colSpan={8} />}
             {!loading && customers.length === 0 && (
               <tr>
                 <td colSpan={8} className="py-16 text-center">
