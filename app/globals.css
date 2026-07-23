@@ -76,6 +76,13 @@
   color: var(--color-brand-200);
 }
 
+/* The active sidebar item (an <a> with bg-brand-50 + text-brand-700) is a
+   selected state — give it a brighter, near-white text so it stands out from
+   the softer brand-green used on small chips/badges. */
+.dark a.bg-brand-50.text-brand-700 {
+  color: #eaf3f0;
+}
+
 body {
   background: var(--color-gray-50);
   color: var(--color-gray-900);
