@@ -1,18 +1,23 @@
 import nodemailer from "nodemailer";
 
 /**
- * Nodemailer transport built from the SMTP_* env vars.
+ * Email delivery. Two transports, chosen at runtime:
  *
- * Nodemailer is only the sending library — it needs a real SMTP mailbox to
- * send through (e.g. a Google Workspace account with 2FA + an App Password).
- * See .env.example for the required keys.
+ * 1. Resend HTTP API (preferred) — set RESEND_API_KEY. Sends over HTTPS (443),
+ *    which works from hosts like Render that block outbound SMTP ports.
+ * 2. SMTP via nodemailer — set SMTP_* — for hosts that allow SMTP.
  *
- * If SMTP isn't configured we don't blow up: `sendMail` logs the message to the
- * server console instead, so the OTP flow is testable before the credentials
- * land. Never rely on that path in production.
+ * The "from" address comes from SMTP_FROM (a verified sender on the chosen
+ * provider). If neither transport is configured, sendMail logs to the console
+ * so the OTP flow is testable without credentials — never rely on that in prod.
  */
 const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
+/** Verified sender used by both transports (e.g. "Plattera <no-reply@plattera.in>"). */
+const MAIL_FROM = SMTP_FROM ?? SMTP_USER ?? "Plattera <onboarding@resend.dev>";
+
+export const resendConfigured = Boolean(RESEND_API_KEY);
 export const smtpConfigured = Boolean(
   SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS,
 );
@@ -32,17 +37,39 @@ const transporter = smtpConfigured
   : null;
 
 /**
- * Connection + auth check without sending a message. Returns the raw SMTP error
- * details so a misconfiguration (bad password vs blocked port) is diagnosable.
+ * Health check for the active transport. For Resend it lists the account's
+ * verified domains (so you can see if the sending domain is verified); for SMTP
+ * it runs a connection + auth check. Returns raw error details for diagnosis.
  */
 export async function verifySmtp() {
-  if (!transporter) return { ok: false, reason: "SMTP not configured" };
+  if (RESEND_API_KEY) {
+    try {
+      const res = await fetch("https://api.resend.com/domains", {
+        headers: { Authorization: `Bearer ${RESEND_API_KEY}` },
+      });
+      const body: any = await res.json().catch(() => ({}));
+      return {
+        ok: res.ok,
+        transport: "resend",
+        from: MAIL_FROM,
+        status: res.status,
+        domains: Array.isArray(body?.data)
+          ? body.data.map((d: any) => `${d.name}:${d.status}`)
+          : undefined,
+        error: res.ok ? undefined : body?.message ?? "Resend check failed",
+      };
+    } catch (e: any) {
+      return { ok: false, transport: "resend", error: e?.message ?? String(e) };
+    }
+  }
+  if (!transporter) return { ok: false, reason: "Email not configured" };
   try {
     await transporter.verify();
-    return { ok: true, host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER };
+    return { ok: true, transport: "smtp", host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER };
   } catch (e: any) {
     return {
       ok: false,
+      transport: "smtp",
       host: SMTP_HOST,
       port: SMTP_PORT,
       user: SMTP_USER,
@@ -61,17 +88,38 @@ interface MailInput {
   html?: string;
 }
 
+/** Send via the Resend HTTP API (works where SMTP ports are blocked). */
+async function sendViaResend({ to, subject, text, html }: MailInput) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ from: MAIL_FROM, to: [to], subject, text, html: html ?? undefined }),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`Resend ${res.status}: ${detail.slice(0, 400)}`);
+  }
+  return { delivered: true as const };
+}
+
 export async function sendMail({ to, subject, text, html }: MailInput) {
+  if (RESEND_API_KEY) {
+    return sendViaResend({ to, subject, text, html });
+  }
+
   if (!transporter) {
     // Dev / not-yet-configured fallback.
     console.warn(
-      `[mailer] SMTP not configured — email not sent.\n  to: ${to}\n  subject: ${subject}\n  ${text}`,
+      `[mailer] Email not configured — not sent.\n  to: ${to}\n  subject: ${subject}\n  ${text}`,
     );
     return { delivered: false as const };
   }
 
   await transporter.sendMail({
-    from: SMTP_FROM ?? SMTP_USER,
+    from: MAIL_FROM,
     to,
     subject,
     text,
