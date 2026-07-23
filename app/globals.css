@@ -61,6 +61,21 @@
   color-scheme: dark;
 }
 
+/*
+  Brand *text* utilities are a dark green meant for light/tinted backgrounds
+  (chips, badges, the active sidebar item `bg-brand-50 text-brand-700`). In dark
+  mode those backgrounds flip dark, so the text must lighten or it's unreadable.
+  We can't remap --color-brand-700 itself because bg-brand-600/700 (the green
+  buttons) must stay green — so override the text-* utilities directly here.
+*/
+.dark .text-brand-600,
+.dark .text-brand-700,
+.dark .text-brand-800,
+.dark .hover\:text-brand-600:hover,
+.dark .hover\:text-brand-700:hover {
+  color: var(--color-brand-200);
+}
+
 body {
   background: var(--color-gray-50);
   color: var(--color-gray-900);
