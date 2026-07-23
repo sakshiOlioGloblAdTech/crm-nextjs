@@ -58,7 +58,8 @@ const navGroups = [
       { href: "/reports",                  label: "Reports",           icon: BarChart2  },
       { href: "/users",                    label: "Admin Users",       icon: UserCog    },
       { href: "/settings",                 label: "Settings",          icon: Settings   },
-      { href: "/settings/taxes",           label: "Tax Rules",         icon: Layers     },
+      // Tax Rules — out of scope (hidden from nav; page/API kept for later).
+      // { href: "/settings/taxes",           label: "Tax Rules",         icon: Layers     },
       { href: "/settings/payments",        label: "Payment Providers", icon: CreditCard },
       { href: "/settings/notifications",   label: "Notifications",     icon: Bell       },
       { href: "/products/tags",            label: "Product Tags",      icon: Tag        },
