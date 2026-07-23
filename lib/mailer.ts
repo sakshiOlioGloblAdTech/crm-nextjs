@@ -24,8 +24,35 @@ const transporter = smtpConfigured
       // 465 = implicit TLS; 587 = STARTTLS.
       secure: Number(SMTP_PORT) === 465,
       auth: { user: SMTP_USER, pass: SMTP_PASS },
+      // Fail fast instead of hanging ~2min if the host is unreachable.
+      connectionTimeout: 15_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 20_000,
     })
   : null;
+
+/**
+ * Connection + auth check without sending a message. Returns the raw SMTP error
+ * details so a misconfiguration (bad password vs blocked port) is diagnosable.
+ */
+export async function verifySmtp() {
+  if (!transporter) return { ok: false, reason: "SMTP not configured" };
+  try {
+    await transporter.verify();
+    return { ok: true, host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER };
+  } catch (e: any) {
+    return {
+      ok: false,
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      user: SMTP_USER,
+      error: e?.message ?? String(e),
+      code: e?.code,
+      command: e?.command,
+      response: e?.response,
+    };
+  }
+}
 
 interface MailInput {
   to: string;
