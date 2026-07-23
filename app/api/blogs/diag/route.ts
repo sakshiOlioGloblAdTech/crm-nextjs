@@ -17,9 +17,27 @@ export async function GET(req: NextRequest) {
   }
 
   const title = "Diag Blog " + Math.random().toString(36).slice(2, 8);
+  // Full form-shaped payload (matches BlogForm / POST /api/blogs).
+  const status = "published";
+  const published = status === "published";
   try {
     const blog = await prisma.blog.create({
-      data: { title, slug: slugify(title), status: "draft", publishedAt: null },
+      data: {
+        title,
+        slug: slugify(title),
+        excerpt: "A short excerpt.",
+        content: "## Heading\n\nA paragraph with an em–dash and \"quotes\".\n\n- one\n- two",
+        image: "",
+        altTag: "",
+        author: "Team Plattera",
+        category: "Test",
+        readTime: "5 mins read",
+        status: published ? "published" : "draft",
+        publishedAt: published ? new Date() : null,
+        metaTitle: "",
+        metaDescription: "",
+        metaKeywords: "",
+      },
     });
     await prisma.blog.delete({ where: { id: blog.id } });
     return NextResponse.json({ ok: true, createdId: blog.id, slug: slugify(title) });
