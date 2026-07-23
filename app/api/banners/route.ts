@@ -18,12 +18,17 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const body = await req.json();
-    const { bannerImg, title, description, btnText } = body;
+    const { bannerImg, title, description, btnText, btnLink, mode, status } = body;
     if (!bannerImg || !title || !description || !btnText) {
       return NextResponse.json({ error: "All fields required" }, { status: 400 });
     }
     const banner = await prisma.homeBanner.create({
-      data: { bannerImg, title, description, btnText },
+      data: {
+        bannerImg, title, description, btnText,
+        btnLink: btnLink || null,
+        mode: mode || "both",
+        status: status ?? true,
+      },
     });
     return NextResponse.json(banner, { status: 201 });
   } catch {

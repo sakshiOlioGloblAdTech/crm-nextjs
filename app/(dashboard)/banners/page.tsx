@@ -9,7 +9,12 @@ interface Banner {
   title: string;
   description: string;
   btnText: string;
+  btnLink?: string;
+  mode?: string;
+  status?: boolean;
 }
+
+const EMPTY = { bannerImg: "", title: "", description: "", btnText: "", btnLink: "", mode: "both", status: true };
 
 const INPUT = "w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500";
 
@@ -20,7 +25,7 @@ export default function BannersPage() {
   const [editing,   setEditing]   = useState<Banner | null>(null);
   const [saving,    setSaving]    = useState(false);
   const [deleting,  setDeleting]  = useState<number | null>(null);
-  const [form, setForm] = useState({ bannerImg: "", title: "", description: "", btnText: "" });
+  const [form, setForm] = useState(EMPTY);
 
   useEffect(() => { load(); }, []);
 
@@ -34,13 +39,16 @@ export default function BannersPage() {
 
   function openCreate() {
     setEditing(null);
-    setForm({ bannerImg: "", title: "", description: "", btnText: "" });
+    setForm(EMPTY);
     setShowForm(true);
   }
 
   function openEdit(b: Banner) {
     setEditing(b);
-    setForm({ bannerImg: b.bannerImg, title: b.title, description: b.description, btnText: b.btnText });
+    setForm({
+      bannerImg: b.bannerImg, title: b.title, description: b.description, btnText: b.btnText,
+      btnLink: b.btnLink ?? "", mode: b.mode ?? "both", status: b.status ?? true,
+    });
     setShowForm(true);
   }
 
@@ -102,6 +110,26 @@ export default function BannersPage() {
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={2} className={INPUT} placeholder="Discover our premium collection..." />
           </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Button Link</label>
+              <input value={form.btnLink} onChange={(e) => setForm({ ...form, btnLink: e.target.value })}
+                className={INPUT} placeholder="/products or /category/hampers" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Show In</label>
+              <select value={form.mode} onChange={(e) => setForm({ ...form, mode: e.target.value })} className={INPUT}>
+                <option value="both">Both (Corporate &amp; Personal)</option>
+                <option value="corporate">Corporate only</option>
+                <option value="personal">Personal only</option>
+              </select>
+            </div>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={form.status} onChange={(e) => setForm({ ...form, status: e.target.checked })}
+              className="w-4 h-4 accent-brand-600" />
+            <span className="text-sm text-gray-700">Active (show on storefront)</span>
+          </label>
           <div className="flex items-center gap-3 pt-2">
             <button onClick={handleSave} disabled={saving}
               className="inline-flex items-center gap-2 px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl disabled:opacity-50">

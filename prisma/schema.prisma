@@ -784,6 +784,10 @@ model HomeBanner {
   title       String
   description String
   btnText     String
+  btnLink     String?
+  // Which storefront hero shows it: "corporate" | "personal" | "both".
+  mode        String   @default("both")
+  status      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

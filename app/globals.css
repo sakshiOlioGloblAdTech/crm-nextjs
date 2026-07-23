@@ -83,6 +83,15 @@
   color: #eaf3f0;
 }
 
+/* Native <select> and its dropdown options need explicit colors in dark mode —
+   otherwise the browser renders unreadable light-on-light text. Applies to
+   every select in the admin for a consistent, readable look. */
+.dark select,
+.dark select option {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-900);
+}
+
 body {
   background: var(--color-gray-50);
   color: var(--color-gray-900);
