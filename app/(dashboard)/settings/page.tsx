@@ -25,6 +25,11 @@ export default function SettingsPage() {
     email3:             "",
     deliveryFee:        "",
     defaultDeliveryFee: "",
+    phone:              "",
+    whatsapp:           "",
+    supportEmail:       "",
+    instagram:          "",
+    linkedin:           "",
   });
 
   useEffect(() => {
@@ -35,6 +40,11 @@ export default function SettingsPage() {
         email3:             d.email3             ?? "",
         deliveryFee:        d.deliveryFee?.toString()        ?? "",
         defaultDeliveryFee: d.defaultDeliveryFee?.toString() ?? "",
+        phone:              d.phone              ?? "",
+        whatsapp:           d.whatsapp           ?? "",
+        supportEmail:       d.supportEmail       ?? "",
+        instagram:          d.instagram          ?? "",
+        linkedin:           d.linkedin           ?? "",
       });
       setLoading(false);
     });
@@ -150,6 +160,41 @@ export default function SettingsPage() {
                 type="number" className={inputClass(er("defaultDeliveryFee"), t("defaultDeliveryFee"))} placeholder="50" />
               {t("defaultDeliveryFee") && er("defaultDeliveryFee") && <p className="text-xs text-red-500 mt-1">⚠ {er("defaultDeliveryFee")}</p>}
               <p className="text-xs text-gray-400 mt-1">Fallback fee if no rule matches</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Storefront Contact & Social */}
+        <div className="bg-surface border border-gray-200 rounded-2xl p-6 space-y-4">
+          <h2 className="font-semibold text-gray-900 text-sm mb-2">Storefront Contact &amp; Social</h2>
+          <p className="text-xs text-gray-400">Shown on the storefront footer, contact page and WhatsApp button.</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Phone Number</label>
+              <input name="phone" value={form.phone} onChange={handleChange}
+                className={inputClass(undefined, false)} placeholder="+91 93218 20699" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">WhatsApp Number</label>
+              <input name="whatsapp" value={form.whatsapp} onChange={handleChange}
+                className={inputClass(undefined, false)} placeholder="919321820699" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">Support / Contact Email</label>
+            <input name="supportEmail" value={form.supportEmail} onChange={handleChange}
+              type="email" className={inputClass(undefined, false)} placeholder="hello@plattera.in" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Instagram URL</label>
+              <input name="instagram" value={form.instagram} onChange={handleChange}
+                className={inputClass(undefined, false)} placeholder="https://instagram.com/plattera.in" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">LinkedIn URL</label>
+              <input name="linkedin" value={form.linkedin} onChange={handleChange}
+                className={inputClass(undefined, false)} placeholder="https://linkedin.com/company/plattera" />
             </div>
           </div>
         </div>

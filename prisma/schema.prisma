@@ -801,6 +801,12 @@ model Setting {
   email3             String?
   deliveryFee        Float?
   defaultDeliveryFee Float?
+  // Storefront contact + social (shown in the footer / contact page / WhatsApp).
+  phone              String?
+  whatsapp           String?
+  supportEmail       String?
+  instagram          String?
+  linkedin           String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

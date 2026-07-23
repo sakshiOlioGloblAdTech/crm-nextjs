@@ -19,15 +19,23 @@ export async function PUT(req: NextRequest) {
     const session = await auth();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const body = await req.json();
-    const { email, email2, email3, deliveryFee, defaultDeliveryFee } = body;
+    const { email, email2, email3, deliveryFee, defaultDeliveryFee,
+      phone, whatsapp, supportEmail, instagram, linkedin } = body;
+    const data = {
+      email, email2, email3,
+      deliveryFee: parseFloat(deliveryFee ?? "0"),
+      defaultDeliveryFee: parseFloat(defaultDeliveryFee ?? "0"),
+      phone: phone || null,
+      whatsapp: whatsapp || null,
+      supportEmail: supportEmail || null,
+      instagram: instagram || null,
+      linkedin: linkedin || null,
+    };
     let settings = await prisma.setting.findFirst();
     if (!settings) {
-      settings = await prisma.setting.create({ data: { email, email2, email3, deliveryFee: parseFloat(deliveryFee ?? "0"), defaultDeliveryFee: parseFloat(defaultDeliveryFee ?? "0") } });
+      settings = await prisma.setting.create({ data });
     } else {
-      settings = await prisma.setting.update({
-        where: { id: settings.id },
-        data: { email, email2, email3, deliveryFee: parseFloat(deliveryFee ?? "0"), defaultDeliveryFee: parseFloat(defaultDeliveryFee ?? "0") },
-      });
+      settings = await prisma.setting.update({ where: { id: settings.id }, data });
     }
     return NextResponse.json(settings);
   } catch {
