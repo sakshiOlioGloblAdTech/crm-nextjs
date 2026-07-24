@@ -21,6 +21,7 @@ async function shapeProfile(customerId: number) {
     name: c.name,
     email: c.email,
     mobileNumber: c.mobileNumber ?? "",
+    company: c.company ?? "",
     gender: c.gender ?? "",
     dob: isoDate(c.dob),
     anniversary: isoDate(c.anniversary),
@@ -51,6 +52,7 @@ const dateStr = z
 const schema = z.object({
   name: z.string().min(1).optional(),
   mobileNumber: z.string().optional(),
+  company: z.string().optional(),
   gender: z.string().optional(),
   dob: dateStr,
   anniversary: dateStr,
@@ -79,6 +81,7 @@ export async function PATCH(req: NextRequest) {
       data: {
         ...(d.name != null ? { name: d.name } : {}),
         ...(d.mobileNumber != null ? { mobileNumber: d.mobileNumber } : {}),
+        ...(d.company != null ? { company: d.company } : {}),
         ...(d.gender != null ? { gender: d.gender } : {}),
         ...(d.dob !== undefined ? { dob: d.dob ? new Date(d.dob) : null } : {}),
         ...(d.anniversary !== undefined

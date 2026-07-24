@@ -53,6 +53,7 @@ model Customer {
   /// Wedding/relationship anniversary — powers OCCASION_REMINDER emails.
   anniversary   DateTime? @db.Date
   gender        String?
+  company       String?
   password      String
   uniqueId      String
   token         String?
