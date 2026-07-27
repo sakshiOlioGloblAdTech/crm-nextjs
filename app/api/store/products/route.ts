@@ -33,7 +33,9 @@ export async function GET(req: NextRequest) {
     const maxPrice = searchParams.get("maxPrice");
     const sort = searchParams.get("sort") ?? "newest";
     const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
-    const limit = Math.min(48, Math.max(1, parseInt(searchParams.get("limit") ?? "12")));
+    // The storefront pulls a wide page and filters/paginates client-side, so
+    // allow a high ceiling; keep it bounded to avoid an unbounded query.
+    const limit = Math.min(500, Math.max(1, parseInt(searchParams.get("limit") ?? "12")));
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { status: true };
