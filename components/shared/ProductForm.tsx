@@ -7,6 +7,7 @@ import Link from "next/link";
 import { slugify } from "@/lib/utils";
 import { validateForm, hasErrors, ValidationErrors } from "@/lib/validation";
 import { inputClass, textareaClass, selectClass } from "@/components/shared/FormField";
+import { ImageUpload } from "@/components/shared/ImageUpload";
 
 interface Variation {
   id?: number;
@@ -357,11 +358,23 @@ export default function ProductForm({ initial = {}, mode }: Props) {
               onChange={handleChange}
               rows={3}
               className={textareaClass()}
-              placeholder="One image URL per line (up to 4). File upload arrives with cloud storage."
+              placeholder="One image URL per line (up to 4)."
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Shown in the product gallery. One shareable/hosted image URL per line.
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <ImageUpload
+                folder="products"
+                label="Upload image"
+                onUploaded={(url) =>
+                  setForm((f) => ({
+                    ...f,
+                    images: f.images.trim() ? `${f.images.trim()}\n${url}` : url,
+                  }))
+                }
+              />
+              <span className="text-xs text-gray-500">
+                PNG, JPG or WEBP · up to 5 MB. Each upload adds a line above; or paste hosted URLs.
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -516,6 +529,13 @@ export default function ProductForm({ initial = {}, mode }: Props) {
                   <input value={v.variationImage}
                     onChange={(e) => handleVariationChange(i, "variationImage", e.target.value)}
                     className={inputClass()} placeholder="https://..." />
+                  <div className="mt-1.5">
+                    <ImageUpload
+                      folder="products"
+                      label="Upload"
+                      onUploaded={(url) => handleVariationChange(i, "variationImage", url)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
