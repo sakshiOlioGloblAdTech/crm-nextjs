@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import {
   uploadToR2,
+  deleteFromR2,
+  keyFromUrl,
   r2Configured,
   isAllowedType,
   MAX_UPLOAD_BYTES,
@@ -46,5 +48,28 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("POST /api/uploads failed", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+  }
+}
+
+/**
+ * DELETE /api/uploads  (admin only) — remove an image from R2.
+ * Body: { url }. Only deletes objects in our bucket (ignores external URLs).
+ */
+export async function DELETE(req: NextRequest) {
+  const session = await auth();
+  if (!session)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!r2Configured) return NextResponse.json({ ok: true });
+
+  try {
+    const { url } = (await req.json().catch(() => ({}))) as { url?: string };
+    const key = url ? keyFromUrl(url) : null;
+    // Not one of ours (external/placeholder URL) — nothing to delete.
+    if (!key) return NextResponse.json({ ok: true, skipped: true });
+    await deleteFromR2(key);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("DELETE /api/uploads failed", error);
+    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
   }
 }

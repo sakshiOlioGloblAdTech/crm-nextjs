@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 import { storeJson, handleOptions } from "@/lib/store";
 import {
   uploadToR2,
+  deleteFromR2,
+  keyFromUrl,
   r2Configured,
   isAllowedType,
   MAX_UPLOAD_BYTES,
@@ -45,5 +47,26 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("POST /api/store/uploads failed", error);
     return storeJson({ error: "Upload failed" }, 500);
+  }
+}
+
+/**
+ * DELETE /api/store/uploads  — remove a just-uploaded storefront file from R2.
+ * Body: { url }. Restricted to the personalization/ and vendor/ folders so a
+ * caller can't delete admin/product images.
+ */
+export async function DELETE(req: NextRequest) {
+  if (!r2Configured) return storeJson({ ok: true });
+  try {
+    const { url } = (await req.json().catch(() => ({}))) as { url?: string };
+    const key = url ? keyFromUrl(url) : null;
+    if (!key) return storeJson({ error: "Invalid file URL" }, 400);
+    if (!key.startsWith("personalization/") && !key.startsWith("vendor/"))
+      return storeJson({ error: "Not allowed" }, 403);
+    await deleteFromR2(key);
+    return storeJson({ ok: true });
+  } catch (error) {
+    console.error("DELETE /api/store/uploads failed", error);
+    return storeJson({ error: "Delete failed" }, 500);
   }
 }

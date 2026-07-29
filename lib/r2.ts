@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 
 /**
@@ -84,4 +88,17 @@ export async function uploadToR2(
   );
 
   return { url: `${PUBLIC_BASE}/${key}`, key };
+}
+
+/** Extract the object key from a public URL (only for URLs in our bucket). */
+export function keyFromUrl(url: string): string | null {
+  if (!PUBLIC_BASE || !url) return null;
+  const prefix = `${PUBLIC_BASE}/`;
+  return url.startsWith(prefix) ? url.slice(prefix.length) : null;
+}
+
+/** Delete an object by key. No-op if R2 isn't configured. */
+export async function deleteFromR2(key: string): Promise<void> {
+  if (!client || !BUCKET) throw new Error("R2 is not configured");
+  await client.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }));
 }
