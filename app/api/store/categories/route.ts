@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { storeJson, handleOptions } from "@/lib/store";
 
+// Always read fresh so newly-added categories appear without a redeploy.
+export const dynamic = "force-dynamic";
+
 export const OPTIONS = handleOptions;
 
 /**
