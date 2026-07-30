@@ -25,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const body = await req.json();
     const {
       title, excerpt, content, image, altTag, author, category,
-      readTime, status, metaTitle, metaDescription, metaKeywords,
+      readTime, status, metaTitle, metaDescription, metaKeywords, products,
     } = body;
 
     const existing = await prisma.blog.findUnique({ where: { id: parseInt(id) } });
@@ -44,6 +44,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         status: published ? "published" : "draft",
         publishedAt,
         metaTitle, metaDescription, metaKeywords,
+        products: Array.isArray(products) ? products : [],
       },
     });
     return NextResponse.json(blog);

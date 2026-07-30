@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       title, excerpt, content, image, altTag, author, category,
-      readTime, status, metaTitle, metaDescription, metaKeywords,
+      readTime, status, metaTitle, metaDescription, metaKeywords, products,
     } = body;
 
     if (!title) return NextResponse.json({ error: "Title is required" }, { status: 400 });
@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
         status: published ? "published" : "draft",
         publishedAt: published ? new Date() : null,
         metaTitle, metaDescription, metaKeywords,
+        products: Array.isArray(products) ? products : [],
       },
     });
     return NextResponse.json(blog, { status: 201 });

@@ -254,6 +254,8 @@ model Blog {
   metaTitle       String?
   metaDescription String?
   metaKeywords    String?
+  /** Featured product slugs (urlSlug[]) shown as "Buy Now" cards on the post. */
+  products        Json?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

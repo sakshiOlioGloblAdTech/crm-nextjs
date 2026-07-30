@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { validateForm, hasErrors, ValidationErrors } from "@/lib/validation";
 import { inputClass, textareaClass } from "@/components/shared/FormField";
@@ -14,6 +14,7 @@ interface BlogFormProps {
     image?: string; altTag?: string; author?: string; category?: string;
     readTime?: string; status?: string;
     metaTitle?: string; metaDescription?: string; metaKeywords?: string;
+    products?: string[];
   };
   mode: "create" | "edit";
 }
@@ -42,7 +43,32 @@ export default function BlogForm({ initial = {}, mode }: BlogFormProps) {
     metaTitle:       initial.metaTitle       ?? "",
     metaDescription: initial.metaDescription ?? "",
     metaKeywords:    initial.metaKeywords    ?? "",
+    products:        (initial.products as string[]) ?? [],
   });
+
+  // Products the admin can feature in this post (shown as Buy Now cards).
+  const [allProducts, setAllProducts] = useState<
+    { urlSlug: string; productName: string }[]
+  >([]);
+  useEffect(() => {
+    fetch("/api/products?limit=200")
+      .then((r) => r.json())
+      .then((d) =>
+        setAllProducts(
+          (d.products ?? []).filter((p: any) => p.urlSlug),
+        ),
+      )
+      .catch(() => {});
+  }, []);
+
+  const addProduct = (slug: string) => {
+    if (!slug || form.products.includes(slug)) return;
+    setForm((f) => ({ ...f, products: [...f.products, slug] }));
+  };
+  const removeProduct = (slug: string) =>
+    setForm((f) => ({ ...f, products: f.products.filter((s) => s !== slug) }));
+  const nameForSlug = (slug: string) =>
+    allProducts.find((p) => p.urlSlug === slug)?.productName ?? slug;
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
@@ -152,6 +178,51 @@ export default function BlogForm({ initial = {}, mode }: BlogFormProps) {
               <input name="altTag" value={form.altTag} onChange={handleChange} onBlur={handleBlur}
                 className={inputClass(err("altTag"), t("altTag"))} placeholder="Describe the cover image" />
             </div>
+          </div>
+
+          {/* Featured products — shown as "Buy Now" cards on the storefront post */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+              Featured Products
+            </label>
+            <select
+              value=""
+              onChange={(e) => addProduct(e.target.value)}
+              className={inputClass()}
+            >
+              <option value="">+ Add a product to this post…</option>
+              {allProducts
+                .filter((p) => !form.products.includes(p.urlSlug))
+                .map((p) => (
+                  <option key={p.urlSlug} value={p.urlSlug}>
+                    {p.productName}
+                  </option>
+                ))}
+            </select>
+            {form.products.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {form.products.map((slug) => (
+                  <span
+                    key={slug}
+                    className="inline-flex items-center gap-1.5 pl-3 pr-1.5 py-1 bg-brand-50 text-brand-700 rounded-full text-sm"
+                  >
+                    {nameForSlug(slug)}
+                    <button
+                      type="button"
+                      onClick={() => removeProduct(slug)}
+                      className="p-0.5 rounded-full hover:bg-brand-100"
+                      aria-label={`Remove ${nameForSlug(slug)}`}
+                    >
+                      <X size={13} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <p className="text-xs text-gray-400 mt-1">
+              These appear as clickable product cards (with a Buy Now button) on
+              the published post.
+            </p>
           </div>
 
           <div className="grid grid-cols-3 gap-4">

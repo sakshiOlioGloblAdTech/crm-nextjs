@@ -21,6 +21,7 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
     metaTitle: blog.metaTitle ?? "",
     metaDescription: blog.metaDescription ?? "",
     metaKeywords: blog.metaKeywords ?? "",
+    products: Array.isArray(blog.products) ? (blog.products as string[]) : [],
   };
 
   return <BlogForm mode="edit" initial={safe} />;
