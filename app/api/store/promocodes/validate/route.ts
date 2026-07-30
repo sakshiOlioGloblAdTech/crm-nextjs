@@ -37,6 +37,15 @@ export async function POST(req: NextRequest) {
       return storeJson({ valid: false, discount: 0, message: "This coupon has expired." });
     }
 
+    // Minimum cart subtotal (if set on the coupon).
+    if (promo.minimumOrderValue && subtotal < promo.minimumOrderValue) {
+      return storeJson({
+        valid: false,
+        discount: 0,
+        message: `Add ₹${Math.ceil(promo.minimumOrderValue - subtotal)} more to use this coupon (minimum order ₹${promo.minimumOrderValue.toFixed(0)}).`,
+      });
+    }
+
     // discountType: 1 = percentage, 2 = fixed amount.
     let discount = 0;
     if (promo.discountType === 1) {

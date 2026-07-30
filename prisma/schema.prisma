@@ -476,6 +476,8 @@ model Promocode {
   discountType     Int
   discount         Float
   maximumCap       Int
+  /** Minimum cart subtotal required to use the coupon (null = no minimum). */
+  minimumOrderValue Float?
   startDate        DateTime @db.Date
   expiryDate       DateTime @db.Date
   useTime          Int

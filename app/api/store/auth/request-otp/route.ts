@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { storeJson, handleOptions } from "@/lib/store";
 import { sendMail, otpEmail } from "@/lib/mailer";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 import {
   generateOtp,
   hashCode,
@@ -29,6 +30,18 @@ export async function POST(req: NextRequest) {
     }
 
     const email = normalizeEmail(parsed.data.email);
+
+    // Abuse protection: cap OTP requests per IP and per email (on top of the
+    // per-email resend cooldown below). Same generic message either way.
+    const tooMany =
+      !rateLimit(`otp-ip:${clientIp(req)}`, 10, 10 * 60 * 1000) ||
+      !rateLimit(`otp-email:${email}`, 5, 60 * 60 * 1000);
+    if (tooMany) {
+      return storeJson(
+        { error: "Too many code requests. Please try again in a few minutes." },
+        429,
+      );
+    }
 
     // Resend cooldown — block rapid re-requests for the same address.
     const recent = await prisma.emailOtp.findFirst({

@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       promocode, shortDescription, description,
-      discountType, discount, maximumCap,
+      discountType, discount, maximumCap, minimumOrderValue,
       startDate, expiryDate, useTime,
       isFirstOrder, isProduct, isSubcategory,
       status, productIds, subCategoryIds,
@@ -55,6 +55,10 @@ export async function POST(req: NextRequest) {
         discountType:  parseInt(discountType),
         discount:      parseFloat(discount),
         maximumCap:    parseInt(maximumCap ?? "0"),
+        minimumOrderValue:
+          minimumOrderValue === "" || minimumOrderValue == null
+            ? null
+            : parseFloat(minimumOrderValue),
         startDate:     new Date(startDate),
         expiryDate:    new Date(expiryDate),
         useTime:       parseInt(useTime ?? "2"),

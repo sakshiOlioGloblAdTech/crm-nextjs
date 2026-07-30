@@ -31,6 +31,7 @@ export default function PromoForm({ initial = {}, mode }: Props) {
     discountType:     initial.discountType?.toString() ?? "1",
     discount:         initial.discount?.toString()     ?? "",
     maximumCap:       initial.maximumCap?.toString()   ?? "0",
+    minimumOrderValue: initial.minimumOrderValue?.toString() ?? "",
     startDate:        initial.startDate ? new Date(initial.startDate).toISOString().split("T")[0] : "",
     expiryDate:       initial.expiryDate ? new Date(initial.expiryDate).toISOString().split("T")[0] : "",
     useTime:          initial.useTime?.toString() ?? "2",
@@ -169,6 +170,12 @@ export default function PromoForm({ initial = {}, mode }: Props) {
               <input name="maximumCap" value={form.maximumCap} onChange={handleChange} onBlur={handleBlur}
                 type="number" className={inputClass(er("maximumCap"), t("maximumCap"))} placeholder="500" />
               <p className="text-xs text-gray-400 mt-1">Max discount amount</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Minimum Order Value (₹)</label>
+              <input name="minimumOrderValue" value={form.minimumOrderValue} onChange={handleChange} onBlur={handleBlur}
+                type="number" className={inputClass()} placeholder="e.g. 1500 (blank = none)" />
+              <p className="text-xs text-gray-400 mt-1">Min cart subtotal to use this coupon</p>
             </div>
           </div>
 

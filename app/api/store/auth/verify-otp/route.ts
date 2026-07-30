@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     if (!otp) {
       return storeJson(
-        { error: "That code has expired. Please request a new one." },
+        { error: "That code is invalid or has expired. Please request a new one." },
         400,
       );
     }
