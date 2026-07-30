@@ -118,3 +118,20 @@ body {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Interactive elements always show a pointer cursor (browsers default <button>
+   and role=button to the arrow). Covers the whole app in one place. */
+button,
+[role="button"],
+a[href],
+select,
+summary,
+input[type="checkbox"],
+input[type="radio"],
+label:has(> input[type="checkbox"]),
+label:has(> input[type="radio"]) {
+  cursor: pointer;
+}
+:disabled {
+  cursor: not-allowed;
+}
