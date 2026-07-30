@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { TableLoading } from "@/components/shared/Spinner";
@@ -18,6 +19,7 @@ interface Blog {
 }
 
 export default function BlogsPage() {
+  const router = useRouter();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -92,7 +94,7 @@ export default function BlogsPage() {
               <tr><td colSpan={6} className="py-12 text-center text-gray-400">No posts yet</td></tr>
             )}
             {filtered.map((b) => (
-              <tr key={b.id} className="hover:bg-gray-50 transition-colors">
+              <tr key={b.id} onClick={() => router.push(`/blogs/${b.id}/edit`)} className="hover:bg-gray-50 transition-colors cursor-pointer">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{b.title}</div>
                   <div className="text-xs text-gray-400">{b.slug}</div>
@@ -106,7 +108,7 @@ export default function BlogsPage() {
                 </td>
                 <td className="px-4 py-3 text-gray-500">{formatDate(b.createdAt)}</td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center gap-2 justify-end">
+                  <div className="flex items-center gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
                     <Link href={`/blogs/${b.id}/edit`} className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                       <Pencil size={14} />
                     </Link>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ interface SubCategory {
 }
 
 export default function SubCategoriesPage() {
+  const router = useRouter();
   const [subs, setSubs] = useState<SubCategory[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -83,7 +85,7 @@ export default function SubCategoriesPage() {
             {loading && <tr><td colSpan={6} className="py-12 text-center text-gray-400">Loading...</td></tr>}
             {!loading && filtered.length === 0 && <tr><td colSpan={6} className="py-12 text-center text-gray-400">No subcategories found</td></tr>}
             {filtered.map((sub) => (
-              <tr key={sub.id} className="hover:bg-gray-50 transition-colors">
+              <tr key={sub.id} onClick={() => router.push(`/categories/sub/${sub.id}/edit`)} className="hover:bg-gray-50 transition-colors cursor-pointer">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{sub.name}</div>
                   <div className="text-xs text-gray-400">{sub.slug}</div>
@@ -101,7 +103,7 @@ export default function SubCategoriesPage() {
                 </td>
                 <td className="px-4 py-3 text-gray-500">{formatDate(sub.createdAt)}</td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center gap-2 justify-end">
+                  <div className="flex items-center gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
                     <Link href={`/categories/sub/${sub.id}/edit`} className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                       <Pencil size={14} />
                     </Link>

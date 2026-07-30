@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
 import { formatINR, formatDate } from "@/lib/utils";
 import { TableLoading } from "@/components/shared/Spinner";
@@ -28,6 +29,7 @@ interface PaginatedResponse {
 }
 
 export default function ProductsPage() {
+  const router = useRouter();
   const [data, setData] = useState<PaginatedResponse | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -110,7 +112,11 @@ export default function ProductsPage() {
                 : null;
               const totalStock = p.variations.reduce((sum, v) => sum + v.stock, 0);
               return (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={p.id}
+                  onClick={() => router.push(`/products/${p.id}/edit`)}
+                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+                >
                   <td className="px-4 py-3">
                     <div className="font-medium text-gray-900">{p.productName}</div>
                     <div className="text-xs text-gray-400">ID: {p.productId} · {p._count.variations} variation{p._count.variations !== 1 ? "s" : ""}</div>
@@ -140,7 +146,10 @@ export default function ProductsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 justify-end">
+                    <div
+                      className="flex items-center gap-2 justify-end"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Link href={`/products/${p.id}/edit`} className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                         <Pencil size={14} />
                       </Link>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2, Search, Tag, Filter } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ interface Promo {
 }
 
 export default function PromocodesPage() {
+  const router = useRouter();
   const [promos,   setPromos]   = useState<Promo[]>([]);
   const [search,   setSearch]   = useState("");
   const [status,   setStatus]   = useState("");
@@ -108,7 +110,7 @@ export default function PromocodesPage() {
             {promos.map((p) => {
               const expired = new Date(p.expiryDate) < now;
               return (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={p.id} onClick={() => router.push(`/promocodes/${p.id}/edit`)} className="hover:bg-gray-50 transition-colors cursor-pointer">
                   <td className="px-4 py-3">
                     <span className="font-mono font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded-lg text-xs">
                       {p.promocode}
@@ -150,7 +152,7 @@ export default function PromocodesPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5 justify-end">
+                    <div className="flex items-center gap-1.5 justify-end" onClick={(e) => e.stopPropagation()}>
                       <Link href={`/promocodes/${p.id}/edit`}
                         className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                         <Pencil size={14} />

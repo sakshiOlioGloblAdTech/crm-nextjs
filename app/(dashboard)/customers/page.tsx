@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Search, Eye, Users, Filter } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { TableLoading } from "@/components/shared/Spinner";
@@ -18,6 +19,7 @@ interface Customer {
 }
 
 export default function CustomersPage() {
+  const router = useRouter();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [total,     setTotal]     = useState(0);
   const [pages,     setPages]     = useState(1);
@@ -102,7 +104,7 @@ export default function CustomersPage() {
               </tr>
             )}
             {customers.map((c) => (
-              <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+              <tr key={c.id} onClick={() => router.push(`/customers/${c.id}`)} className="hover:bg-gray-50 transition-colors cursor-pointer">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center shrink-0">
@@ -131,7 +133,7 @@ export default function CustomersPage() {
                 <td className="px-4 py-3 text-gray-400 text-xs">{formatDate(c.createdAt)}</td>
                 <td className="px-4 py-3">
                   <Link
-                    href={`/customers/${c.id}`}
+                    href={`/customers/${c.id}`} onClick={(e) => e.stopPropagation()}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
                   >
                     <Eye size={12} /> View

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { TableLoading } from "@/components/shared/Spinner";
@@ -19,6 +20,7 @@ interface Category {
 }
 
 export default function CategoriesPage() {
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -97,7 +99,7 @@ export default function CategoriesPage() {
               <tr><td colSpan={7} className="py-12 text-center text-gray-400">No categories found</td></tr>
             )}
             {filtered.map((cat) => (
-              <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
+              <tr key={cat.id} onClick={() => router.push(`/categories/${cat.id}/edit`)} className="hover:bg-gray-50 transition-colors cursor-pointer">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{cat.name}</div>
                   <div className="text-xs text-gray-400">{cat.slug}</div>
@@ -124,7 +126,7 @@ export default function CategoriesPage() {
                 </td>
                 <td className="px-4 py-3 text-gray-500">{formatDate(cat.createdAt)}</td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center gap-2 justify-end">
+                  <div className="flex items-center gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
                     <Link href={`/categories/${cat.id}/edit`} className="p-1.5 hover:bg-brand-50 rounded-lg text-gray-400 hover:text-brand-600 transition-colors">
                       <Pencil size={14} />
                     </Link>
