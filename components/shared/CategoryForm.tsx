@@ -6,6 +6,7 @@ import { Save, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { validateForm, hasErrors, ValidationErrors } from "@/lib/validation";
 import { inputClass, textareaClass } from "@/components/shared/FormField";
+import { ImageUpload } from "@/components/shared/ImageUpload";
 
 interface CategoryFormProps {
   initial?: {
@@ -133,6 +134,12 @@ export default function CategoryForm({ initial = {}, mode }: CategoryFormProps) 
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">Image URL</label>
               <input name="image" value={form.image} onChange={handleChange} onBlur={handleBlur}
                 className={inputClass(e("image"), t("image"))} placeholder="https://..." />
+              <div className="mt-2">
+                <ImageUpload
+                  folder="categories"
+                  onUploaded={(url) => setForm((f) => ({ ...f, image: url }))}
+                />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">Alt Tag</label>

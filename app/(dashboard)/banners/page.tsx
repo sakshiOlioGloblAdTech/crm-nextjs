@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Pencil, Image, Check, X } from "lucide-react";
+import { ImageUpload } from "@/components/shared/ImageUpload";
 
 interface Banner {
   id: number;
@@ -92,6 +93,12 @@ export default function BannersPage() {
             <label className="block text-sm font-semibold text-gray-700 mb-1.5">Banner Image URL *</label>
             <input value={form.bannerImg} onChange={(e) => setForm({ ...form, bannerImg: e.target.value })}
               className={INPUT} placeholder="https://your-cdn.com/banner.jpg" />
+            <div className="mt-2">
+              <ImageUpload
+                folder="banners"
+                onUploaded={(url) => setForm({ ...form, bannerImg: url })}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
