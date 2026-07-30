@@ -97,3 +97,24 @@ body {
   color: var(--color-gray-900);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* ─── Mobile responsiveness ──────────────────────────────────────────────
+   The admin is desktop-first; these scoped rules make it usable on phones
+   without touching every page. */
+@media (max-width: 640px) {
+  /* Wide data tables scroll horizontally instead of overflowing the viewport. */
+  main table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Fixed multi-column grids stack to a single column. Responsive grids that
+     use sm:/md: variants generate different class names, so they're untouched. */
+  main .grid-cols-2,
+  main .grid-cols-3,
+  main .grid-cols-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

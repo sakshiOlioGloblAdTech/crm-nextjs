@@ -6,10 +6,9 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, ShoppingBag, Package, Users, Tag,
   RotateCcw, Shield, BarChart2, Image, Settings,
-  ChevronDown, UserCog, Layers, XCircle, RefreshCcw,
+  X, UserCog, Layers, RefreshCcw,
   FileText, CreditCard, Bell, MessageSquare, Inbox,
 } from "lucide-react";
-import { useState } from "react";
 
 const navGroups = [
   {
@@ -67,66 +66,80 @@ const navGroups = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({
+  mobileOpen = false,
+  onClose,
+}: {
+  mobileOpen?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside
-      className={cn(
-        "flex flex-col bg-surface border-r border-gray-200 transition-all duration-200",
-        collapsed ? "w-16" : "w-60"
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+          onClick={onClose}
+          aria-hidden
+        />
       )}
-    >
-      {/* Logo */}
-      <div className="flex items-center h-16 px-4 border-b border-gray-200 shrink-0">
-        {!collapsed && (
-          <span className="font-semibold text-gray-900 text-lg truncate">CRM Admin</span>
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="ml-auto p-1 rounded-lg hover:bg-gray-100 text-gray-400"
-        >
-          <ChevronDown
-            size={16}
-            className={cn("transition-transform", collapsed ? "-rotate-90" : "rotate-90")}
-          />
-        </button>
-      </div>
 
-      {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-3 space-y-0.5 px-2">
-        {navGroups.map((group, gi) => (
-          <div key={gi} className="mb-2">
-            {group.label && !collapsed && (
-              <p className="px-2 pt-3 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                {group.label}
-              </p>
-            )}
-            {group.items.map((item) => {
-              const Icon = item.icon;
-              const active = pathname === item.href ||
-                (item.href !== "/dashboard" && pathname.startsWith(item.href));
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={collapsed ? item.label : undefined}
-                  className={cn(
-                    "flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition-colors",
-                    active
-                      ? "bg-brand-50 text-brand-700 font-medium"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                  )}
-                >
-                  <Icon size={16} className="shrink-0" />
-                  {!collapsed && <span className="truncate">{item.label}</span>}
-                </Link>
-              );
-            })}
-          </div>
-        ))}
-      </nav>
-    </aside>
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-60 flex-col bg-surface border-r border-gray-200 transition-transform duration-200",
+          // Static on desktop; slide-in drawer on mobile.
+          "lg:static lg:z-auto lg:translate-x-0",
+          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+        )}
+      >
+        {/* Logo */}
+        <div className="flex items-center h-16 px-4 border-b border-gray-200 shrink-0">
+          <span className="font-semibold text-gray-900 text-lg truncate">CRM Admin</span>
+          <button
+            onClick={onClose}
+            className="ml-auto p-1 rounded-lg hover:bg-gray-100 text-gray-400 lg:hidden"
+            aria-label="Close menu"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto py-3 space-y-0.5 px-2">
+          {navGroups.map((group, gi) => (
+            <div key={gi} className="mb-2">
+              {group.label && (
+                <p className="px-2 pt-3 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  {group.label}
+                </p>
+              )}
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.href ||
+                  (item.href !== "/dashboard" && pathname.startsWith(item.href));
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className={cn(
+                      "flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm transition-colors",
+                      active
+                        ? "bg-brand-50 text-brand-700 font-medium"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    )}
+                  >
+                    <Icon size={16} className="shrink-0" />
+                    <span className="truncate">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+      </aside>
+    </>
   );
 }
